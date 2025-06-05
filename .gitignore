@@ -1,0 +1,103 @@
+# CoinBot .gitignore
+
+# 🔒 보안 관련 (절대 업로드 금지!)
+.env
+config/.env
+*.key
+*.pem
+api_keys.txt
+
+# 🐍 Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# 🔧 가상환경
+venv/
+env/
+ENV/
+coinbot_env/
+
+# 💻 IDE 설정
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# 📊 데이터베이스
+*.db
+*.sqlite
+*.sqlite3
+data/coinbot.db
+data/trades/*.db
+
+# 📁 데이터 폴더 (개인정보 포함)
+data/trades/
+data/logs/
+data/backups/
+
+# 📝 로그 파일
+*.log
+logs/
+coinbot.log
+
+# 🧠 머신러닝 모델
+*.pkl
+*.joblib
+*.h5
+models/
+
+# 📋 임시 파일
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# 📈 리포트 파일
+reports/generated/
+*.pdf
+*.xlsx
+
+# 🔧 설정 백업
+config/*.json.bak
+config/backup/
+
+# 🐛 테스트 관련
+.pytest_cache/
+.coverage
+htmlcov/
+test_results/
+
+# 📦 패키지 관리
+pip-log.txt
+pip-delete-this-directory.txt
+
+# 💰 거래 데이터 (민감정보)
+trades_*.csv
+positions_*.json
+profit_*.txt
+
+# 🌐 웹 관련
+node_modules/
+*.css.map
+*.js.map
