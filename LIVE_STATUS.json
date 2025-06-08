@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "last_updated": "2025-06-08T05:35:19.522600",
+    "last_updated": "2025-06-08T06:57:48.577509",
     "auto_generated": true,
     "version": "1.0.0"
   },
@@ -14,12 +14,12 @@
     "goal": "16만원으로 자동매매 본업 전환"
   },
   "latest_modification": {
-    "timestamp": "2025-06-08T05:35:19.522107",
+    "timestamp": "2025-06-08T06:57:48.576752",
     "file": "utils/auto_updater.py",
     "change_type": "FEATURE_ADD",
     "description": "자동 상태 업데이트 시스템 구축 완료 (테스트)",
     "new_values": {},
-    "session_id": "ai_session_0608_0535"
+    "session_id": "ai_session_0608_0657"
   },
   "critical_settings": {
     "min_score_threshold": 45,
@@ -35,7 +35,7 @@
     "trading_system": "정상",
     "api_connection": "정상",
     "auto_update_system": "활성화",
-    "last_health_check": "2025-06-08T05:35:19.522735"
+    "last_health_check": "2025-06-08T06:57:48.577692"
   },
   "next_priorities": [
     "1주일 매매 성과 모니터링 및 분석",
