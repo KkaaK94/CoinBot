@@ -1,0 +1,709 @@
+{
+  "strategy_config": {
+    "version": "1.0",
+    "last_updated": "2024-12-19",
+    "description": "CoinBot 전략 매개변수 설정 - 16만원→50만원 목표 최적화",
+    "target_return": 2.125,
+    "optimization_date": "2024-12-19"
+  },
+
+  "global_settings": {
+    "enabled_strategies": [
+      "rsi_strategy",
+      "ma_crossover_strategy", 
+      "momentum_strategy",
+      "mean_reversion_strategy",
+      "bollinger_bands_strategy"
+    ],
+    "strategy_weights": {
+      "rsi_strategy": 0.25,
+      "ma_crossover_strategy": 0.20,
+      "momentum_strategy": 0.20,
+      "mean_reversion_strategy": 0.20,
+      "bollinger_bands_strategy": 0.15
+    },
+    "min_signal_confidence": 0.65,
+    "max_concurrent_strategies": 3,
+    "strategy_cooldown_minutes": 180,
+    "signal_aggregation_method": "weighted_average"
+  },
+
+  "market_conditions": {
+    "bull_market": {
+      "condition": "sma_200_slope > 0.001 AND volatility < 0.05",
+      "strategy_multipliers": {
+        "momentum_strategy": 1.2,
+        "ma_crossover_strategy": 1.1,
+        "rsi_strategy": 0.9,
+        "mean_reversion_strategy": 0.8,
+        "bollinger_bands_strategy": 1.0
+      },
+      "risk_multiplier": 1.1
+    },
+    "bear_market": {
+      "condition": "sma_200_slope < -0.001 AND volatility > 0.06",
+      "strategy_multipliers": {
+        "momentum_strategy": 0.7,
+        "ma_crossover_strategy": 0.8,
+        "rsi_strategy": 1.2,
+        "mean_reversion_strategy": 1.3,
+        "bollinger_bands_strategy": 1.1
+      },
+      "risk_multiplier": 0.8
+    },
+    "sideways_market": {
+      "condition": "abs(sma_200_slope) <= 0.001 AND volatility <= 0.06",
+      "strategy_multipliers": {
+        "momentum_strategy": 0.8,
+        "ma_crossover_strategy": 1.0,
+        "rsi_strategy": 1.1,
+        "mean_reversion_strategy": 1.2,
+        "bollinger_bands_strategy": 1.0
+      },
+      "risk_multiplier": 1.0
+    },
+    "high_volatility": {
+      "condition": "volatility > 0.08",
+      "strategy_multipliers": {
+        "momentum_strategy": 0.6,
+        "ma_crossover_strategy": 0.7,
+        "rsi_strategy": 0.8,
+        "mean_reversion_strategy": 0.9,
+        "bollinger_bands_strategy": 0.8
+      },
+      "risk_multiplier": 0.7
+    }
+  },
+
+  "rsi_strategy": {
+    "name": "RSI 과매수/과매도 전략",
+    "description": "RSI 지표를 활용한 역추세 매매 전략",
+    "enabled": true,
+    "weight": 0.25,
+    "parameters": {
+      "rsi_period": 14,
+      "rsi_overbought": 70,
+      "rsi_oversold": 30,
+      "rsi_extreme_overbought": 80,
+      "rsi_extreme_oversold": 20,
+      "rsi_smoothing": 3,
+      "volume_confirmation": true,
+      "min_volume_ratio": 1.2,
+      "divergence_detection": true,
+      "divergence_lookback": 10
+    },
+    "entry_conditions": {
+      "buy": {
+        "primary": "rsi <= rsi_oversold",
+        "confirmation": [
+          "rsi_slope > 0",
+          "volume_ratio >= min_volume_ratio",
+          "price > sma_50 * 0.98"
+        ],
+        "filters": [
+          "not in_downtrend",
+          "daily_volume > min_daily_volume",
+          "spread_percentage < max_spread"
+        ]
+      },
+      "sell": {
+        "primary": "rsi >= rsi_overbought", 
+        "confirmation": [
+          "rsi_slope < 0",
+          "volume_ratio >= min_volume_ratio"
+        ],
+        "filters": [
+          "profit_ratio > min_profit_threshold OR holding_hours > max_holding_hours"
+        ]
+      }
+    },
+    "exit_conditions": {
+      "stop_loss": 0.05,
+      "take_profit": 0.12,
+      "trailing_stop": {
+        "enabled": true,
+        "initial_distance": 0.03,
+        "step_size": 0.01
+      },
+      "time_based": {
+        "max_holding_hours": 48,
+        "min_holding_hours": 2
+      }
+    },
+    "risk_management": {
+      "max_position_size": 0.3,
+      "confidence_calculation": {
+        "base_confidence": 0.6,
+        "rsi_extremeness_bonus": 0.2,
+        "volume_bonus": 0.1,
+        "divergence_bonus": 0.1,
+        "trend_alignment_bonus": 0.1
+      }
+    }
+  },
+
+  "ma_crossover_strategy": {
+    "name": "이동평균 교차 전략",
+    "description": "단기/장기 이동평균 교차를 활용한 추세 추종 전략",
+    "enabled": true,
+    "weight": 0.20,
+    "parameters": {
+      "ma_short_period": 7,
+      "ma_long_period": 25,
+      "ma_type": "EMA",
+      "signal_smoothing": 2,
+      "trend_confirmation_period": 50,
+      "volume_confirmation": true,
+      "min_crossover_strength": 0.005,
+      "anti_whipsaw_filter": true,
+      "whipsaw_prevention_hours": 4
+    },
+    "entry_conditions": {
+      "buy": {
+        "primary": "ma_short > ma_long AND ma_short_prev <= ma_long_prev",
+        "confirmation": [
+          "ma_short_slope > min_crossover_strength",
+          "ma_long_slope > -0.001",
+          "volume_ratio >= 1.1",
+          "price_above_crossover_point"
+        ],
+        "filters": [
+          "not recent_whipsaw",
+          "trend_confirmation_bullish",
+          "market_not_oversold"
+        ]
+      },
+      "sell": {
+        "primary": "ma_short < ma_long AND ma_short_prev >= ma_long_prev",
+        "confirmation": [
+          "ma_short_slope < -min_crossover_strength",
+          "volume_ratio >= 1.0"
+        ],
+        "filters": [
+          "profit_ratio > -0.02 OR holding_hours > 24"
+        ]
+      }
+    },
+    "exit_conditions": {
+      "stop_loss": 0.06,
+      "take_profit": 0.15,
+      "trailing_stop": {
+        "enabled": true,
+        "initial_distance": 0.04,
+        "step_size": 0.01
+      },
+      "time_based": {
+        "max_holding_hours": 72,
+        "min_holding_hours": 4
+      }
+    },
+    "risk_management": {
+      "max_position_size": 0.35,
+      "confidence_calculation": {
+        "base_confidence": 0.65,
+        "crossover_strength_bonus": 0.15,
+        "volume_bonus": 0.1,
+        "trend_alignment_bonus": 0.1
+      }
+    }
+  },
+  "momentum_strategy": {
+    "name": "모멘텀 전략",
+    "description": "가격 및 거래량 모멘텀을 활용한 추세 추종 전략",
+    "enabled": true,
+    "weight": 0.20,
+    "parameters": {
+      "momentum_period": 12,
+      "rate_of_change_period": 10,
+      "volume_momentum_period": 14,
+      "price_momentum_threshold": 0.02,
+      "volume_momentum_threshold": 1.5,
+      "momentum_confirmation_period": 3,
+      "breakout_detection": true,
+      "support_resistance_levels": 5,
+      "fibonacci_retracement": true
+    },
+    "entry_conditions": {
+      "buy": {
+        "primary": "price_momentum > price_momentum_threshold AND volume_momentum > volume_momentum_threshold",
+        "confirmation": [
+          "momentum_slope > 0",
+          "price > resistance_level",
+          "volume_increasing_trend",
+          "no_major_resistance_above"
+        ],
+        "filters": [
+          "not_overbought_condition",
+          "breakout_volume_sufficient",
+          "trend_strength_adequate"
+        ]
+      },
+      "sell": {
+        "primary": "price_momentum < -price_momentum_threshold OR volume_momentum < 0.8",
+        "confirmation": [
+          "momentum_slope < 0",
+          "support_level_broken OR profit_target_reached"
+        ]
+      }
+    },
+    "exit_conditions": {
+      "stop_loss": 0.045,
+      "take_profit": 0.18,
+      "trailing_stop": {
+        "enabled": true,
+        "initial_distance": 0.025,
+        "acceleration_factor": 0.02,
+        "maximum_step": 0.2
+      },
+      "momentum_exit": {
+        "momentum_decay_threshold": 0.5,
+        "volume_decay_threshold": 0.7
+      }
+    },
+    "risk_management": {
+      "max_position_size": 0.4,
+      "confidence_calculation": {
+        "base_confidence": 0.7,
+        "momentum_strength_bonus": 0.2,
+        "breakout_bonus": 0.1,
+        "volume_confirmation_bonus": 0.1
+      }
+    }
+  },
+
+  "mean_reversion_strategy": {
+    "name": "평균 회귀 전략", 
+    "description": "가격이 평균에서 크게 벗어났을 때 회귀를 노리는 전략",
+    "enabled": true,
+    "weight": 0.20,
+    "parameters": {
+      "lookback_period": 20,
+      "deviation_threshold": 2.0,
+      "mean_type": "SMA",
+      "volatility_adjustment": true,
+      "volatility_period": 14,
+      "oversold_threshold": -2.5,
+      "overbought_threshold": 2.5,
+      "confirmation_period": 2,
+      "market_regime_filter": true
+    },
+    "entry_conditions": {
+      "buy": {
+        "primary": "z_score <= oversold_threshold",
+        "confirmation": [
+          "price_bouncing_from_support",
+          "oversold_duration >= confirmation_period",
+          "volume_spike_detected",
+          "not_in_strong_downtrend"
+        ],
+        "filters": [
+          "market_regime_suitable",
+          "liquidity_adequate",
+          "no_fundamental_negatives"
+        ]
+      },
+      "sell": {
+        "primary": "z_score >= overbought_threshold OR price_near_mean",
+        "confirmation": [
+          "reversion_momentum_weakening",
+          "profit_target_approached"
+        ]
+      }
+    },
+    "exit_conditions": {
+      "stop_loss": 0.08,
+      "take_profit": 0.10,
+      "mean_reversion_exit": {
+        "z_score_exit": 0.5,
+        "partial_profit_taking": {
+          "first_target": 0.05,
+          "first_target_percentage": 0.3,
+          "second_target": 0.08,
+          "second_target_percentage": 0.4
+        }
+      }
+    },
+    "risk_management": {
+      "max_position_size": 0.25,
+      "confidence_calculation": {
+        "base_confidence": 0.6,
+        "deviation_extremeness_bonus": 0.25,
+        "market_regime_bonus": 0.1,
+        "volume_confirmation_bonus": 0.05
+      }
+    }
+  },
+
+  "bollinger_bands_strategy": {
+    "name": "볼린저 밴드 전략",
+    "description": "볼린저 밴드 이탈 및 수축/확장을 활용한 전략",
+    "enabled": true,
+    "weight": 0.15,
+    "parameters": {
+      "bb_period": 20,
+      "bb_std_dev": 2.0,
+      "bb_squeeze_threshold": 0.8,
+      "bb_expansion_threshold": 1.2,
+      "band_walk_detection": true,
+      "squeeze_momentum": true,
+      "keltner_channel_confirmation": true,
+      "kc_period": 20,
+      "kc_multiplier": 1.5
+    },
+    "entry_conditions": {
+      "buy": {
+        "primary": "price <= bb_lower_band AND bb_squeeze_release",
+        "confirmation": [
+          "price_bouncing_from_lower_band",
+          "momentum_turning_positive",
+          "volume_above_average",
+          "not_in_band_walk_down"
+        ],
+        "filters": [
+          "squeeze_duration_adequate",
+          "volatility_expansion_starting",
+          "support_level_holding"
+        ]
+      },
+      "sell": {
+        "primary": "price >= bb_upper_band OR bb_squeeze_forming",
+        "confirmation": [
+          "momentum_weakening",
+          "volume_declining",
+          "resistance_level_reached"
+        ]
+      }
+    },
+    "exit_conditions": {
+      "stop_loss": 0.06,
+      "take_profit": 0.14,
+      "band_based_exit": {
+        "middle_band_exit": true,
+        "upper_band_profit_taking": 0.7,
+        "squeeze_exit": true
+      }
+    },
+    "risk_management": {
+      "max_position_size": 0.3,
+      "confidence_calculation": {
+        "base_confidence": 0.65,
+        "squeeze_bonus": 0.2,
+        "band_position_bonus": 0.1,
+        "momentum_bonus": 0.05
+      }
+    }
+  },
+
+  "risk_filters": {
+    "global_filters": {
+      "min_daily_volume": 1000000000,
+      "max_spread_percentage": 0.5,
+      "min_market_cap": 100000000000,
+      "max_correlation_with_btc": 0.9,
+      "blacklisted_coins": ["LUNA", "UST", "FTT"],
+      "max_24h_change": 0.15,
+      "min_trading_days": 30
+    },
+    "market_condition_filters": {
+      "extreme_fear": {
+        "vix_threshold": 80,
+        "action": "reduce_position_size",
+        "multiplier": 0.5
+      },
+      "extreme_greed": {
+        "vix_threshold": 20,
+        "action": "reduce_position_size", 
+        "multiplier": 0.7
+      },
+      "low_liquidity": {
+        "volume_threshold_multiplier": 0.3,
+        "action": "skip_trade"
+      }
+    },
+    "technical_filters": {
+      "trend_strength": {
+        "min_adx": 25,
+        "trend_direction_confirmation": true
+      },
+      "support_resistance": {
+        "min_distance_from_resistance": 0.02,
+        "min_distance_from_support": 0.01
+      },
+      "volatility_filters": {
+        "max_recent_volatility": 0.1,
+        "min_volatility_for_momentum": 0.02
+      }
+    }
+  },
+
+  "position_sizing": {
+    "base_position_size": 50000,
+    "dynamic_sizing": {
+      "enabled": true,
+      "confidence_multiplier": {
+        "high_confidence": 1.2,
+        "medium_confidence": 1.0,
+        "low_confidence": 0.8
+      },
+      "volatility_adjustment": {
+        "enabled": true,
+        "low_volatility_multiplier": 1.1,
+        "high_volatility_multiplier": 0.8
+      },
+      "market_condition_adjustment": {
+        "bull_market_multiplier": 1.1,
+        "bear_market_multiplier": 0.8,
+        "sideways_multiplier": 1.0
+      }
+    },
+    "risk_based_sizing": {
+      "max_risk_per_trade": 0.02,
+      "stop_loss_based_sizing": true,
+      "correlation_adjustment": true,
+      "portfolio_heat_model": {
+        "enabled": true,
+        "max_portfolio_heat": 0.06,
+        "heat_reduction_threshold": 0.04
+      }
+    }
+  },
+  "optimization_settings": {
+    "auto_optimization": {
+      "enabled": true,
+      "optimization_frequency_days": 30,
+      "min_trades_for_optimization": 50,
+      "optimization_method": "genetic_algorithm",
+      "validation_period_ratio": 0.3,
+      "walk_forward_analysis": true
+    },
+    "parameter_ranges": {
+      "rsi_strategy": {
+        "rsi_period": [10, 21],
+        "rsi_overbought": [65, 85],
+        "rsi_oversold": [15, 35],
+        "stop_loss": [0.03, 0.08],
+        "take_profit": [0.08, 0.20]
+      },
+      "ma_crossover_strategy": {
+        "ma_short_period": [5, 12],
+        "ma_long_period": [20, 35],
+        "stop_loss": [0.04, 0.09],
+        "take_profit": [0.10, 0.25]
+      },
+      "momentum_strategy": {
+        "momentum_period": [8, 20],
+        "price_momentum_threshold": [0.01, 0.04],
+        "volume_momentum_threshold": [1.2, 2.0],
+        "stop_loss": [0.03, 0.07],
+        "take_profit": [0.12, 0.25]
+      }
+    },
+    "fitness_function": {
+      "weights": {
+        "total_return": 0.3,
+        "sharpe_ratio": 0.25,
+        "max_drawdown": 0.2,
+        "win_rate": 0.15,
+        "profit_factor": 0.1
+      },
+      "penalties": {
+        "excessive_trades": 0.1,
+        "high_volatility": 0.05,
+        "correlation_penalty": 0.05
+      }
+    }
+  },
+
+  "backtesting_settings": {
+    "default_backtest_period": 90,
+    "commission_rate": 0.0005,
+    "slippage_model": {
+      "enabled": true,
+      "base_slippage": 0.0001,
+      "volume_impact": 0.00001,
+      "volatility_impact": 0.00005
+    },
+    "market_impact": {
+      "enabled": true,
+      "impact_coefficient": 0.1,
+      "max_impact": 0.001
+    },
+    "realistic_execution": {
+      "order_delay_seconds": 1,
+      "partial_fills": true,
+      "market_hours_only": false,
+      "weekend_trading": true
+    },
+    "performance_metrics": [
+      "total_return",
+      "annualized_return", 
+      "volatility",
+      "sharpe_ratio",
+      "sortino_ratio",
+      "calmar_ratio",
+      "max_drawdown",
+      "win_rate",
+      "profit_factor",
+      "average_trade_duration",
+      "recovery_factor"
+    ]
+  },
+
+  "live_trading_adjustments": {
+    "paper_trading_validation": {
+      "required_days": 7,
+      "min_performance_threshold": 0.02,
+      "max_drawdown_threshold": 0.08,
+      "min_trade_count": 10
+    },
+    "gradual_scaling": {
+      "initial_position_multiplier": 0.5,
+      "scaling_period_days": 14,
+      "performance_based_scaling": true,
+      "max_scale_multiplier": 1.5
+    },
+    "real_time_adjustments": {
+      "confidence_decay": {
+        "enabled": true,
+        "decay_rate": 0.1,
+        "min_confidence": 0.4
+      },
+      "adaptive_thresholds": {
+        "enabled": true,
+        "adaptation_speed": 0.05,
+        "min_threshold_change": 0.01
+      }
+    }
+  },
+
+  "signal_combination": {
+    "ensemble_methods": {
+      "voting_system": {
+        "enabled": true,
+        "minimum_agreement": 0.6,
+        "weight_by_performance": true,
+        "recent_performance_weight": 0.7
+      },
+      "signal_averaging": {
+        "enabled": false,
+        "confidence_weighted": true,
+        "outlier_removal": true
+      }
+    },
+    "conflict_resolution": {
+      "opposing_signals": "highest_confidence",
+      "weak_signals": "require_confirmation",
+      "timeout_handling": "cancel_weak_signals"
+    }
+  },
+
+  "performance_targets": {
+    "daily_targets": {
+      "min_daily_return": 0.001,
+      "target_daily_return": 0.005,
+      "max_daily_loss": 0.02
+    },
+    "weekly_targets": {
+      "target_weekly_return": 0.025,
+      "max_weekly_drawdown": 0.05
+    },
+    "monthly_targets": {
+      "target_monthly_return": 0.10,
+      "max_monthly_drawdown": 0.08,
+      "min_win_rate": 0.55
+    },
+    "ultimate_goal": {
+      "initial_capital": 160000,
+      "target_capital": 500000,
+      "target_return": 2.125,
+      "max_time_horizon_days": 365,
+      "acceptable_max_drawdown": 0.15
+    }
+  },
+
+  "emergency_protocols": {
+    "circuit_breakers": {
+      "daily_loss_limit": 0.05,
+      "drawdown_limit": 0.10,
+      "consecutive_losses": 5,
+      "volume_anomaly_threshold": 0.1
+    },
+    "recovery_procedures": {
+      "cooling_off_period_hours": 24,
+      "reduced_position_sizing": 0.5,
+      "conservative_mode_duration_days": 7,
+      "manual_approval_required": true
+    }
+  },
+
+  "monitoring_alerts": {
+    "performance_alerts": {
+      "daily_loss_threshold": 0.03,
+      "drawdown_threshold": 0.06,
+      "win_rate_drop_threshold": 0.1,
+      "volume_anomaly": true
+    },
+    "technical_alerts": {
+      "api_failures": true,
+      "data_quality_issues": true,
+      "strategy_correlation_breakdown": true,
+      "unusual_market_conditions": true
+    },
+    "notification_channels": {
+      "telegram": true,
+      "email": false,
+      "discord": false,
+      "sms": false
+    }
+  },
+
+  "maintenance_schedule": {
+    "daily_tasks": [
+      "performance_review",
+      "risk_metrics_update",
+      "data_quality_check",
+      "log_analysis"
+    ],
+    "weekly_tasks": [
+      "strategy_performance_review",
+      "parameter_adjustment_review",
+      "correlation_analysis",
+      "backup_verification"
+    ],
+    "monthly_tasks": [
+      "full_strategy_optimization",
+      "performance_report_generation",
+      "risk_model_validation",
+      "system_security_audit"
+    ]
+  },
+
+  "version_control": {
+    "parameter_history": {
+      "track_changes": true,
+      "max_history_entries": 100,
+      "rollback_capability": true
+    },
+    "a_b_testing": {
+      "enabled": false,
+      "test_allocation": 0.2,
+      "minimum_test_duration_days": 14,
+      "statistical_significance_threshold": 0.05
+    }
+  },
+
+  "compliance_settings": {
+    "risk_disclosure": "투자에는 원금 손실 위험이 있습니다.",
+    "max_leverage": 1.0,
+    "position_limits": {
+      "single_asset_max": 0.4,
+      "sector_concentration_max": 0.6,
+      "correlation_limit": 0.7
+    },
+    "reporting": {
+      "trade_log_retention_days": 1095,
+      "performance_reporting_frequency": "daily",
+      "audit_trail_enabled": true
+    }
+  }
+}

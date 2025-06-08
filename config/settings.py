@@ -1,225 +1,335 @@
 """
-설정 관리 모듈
-모든 설정값을 중앙에서 관리
+트레이딩 봇 설정 관리
+- 환경별 설정 분리
+- 동적 설정 로드
+- 설정 검증
+- 안전 모드 지원
 """
 
 import os
-from dataclasses import dataclass
-from typing import List, Dict, Any
+import json
+import logging
 from pathlib import Path
+from typing import Dict, Any, Optional, List
+from dataclasses import dataclass, field
 from dotenv import load_dotenv
 
-# 환경변수 로드
-load_dotenv()
+# 프로젝트 루트 디렉토리
+PROJECT_ROOT = Path(__file__).parent.parent
 
 @dataclass
 class TradingConfig:
-    """매매 관련 설정"""
-    initial_capital: int = 160000       # 초기 자본
-    target_capital: int = 500000        # 목표 자본
-    max_positions: int = 3              # 최대 포지션 수
-    capital_per_position: int = 50000   # 포지션당 자본
+    """거래 관련 설정"""
+    # 기본 거래 설정
+    trade_amount: float = 50000  # 거래 금액 (원)
+    max_position_size: float = 500000  # 최대 포지션 크기
+    min_trade_amount: float = 5000  # 최소 거래 금액
     
     # 리스크 관리
-    max_daily_loss: float = 0.08        # 최대 일일 손실률
-    max_position_loss: float = 0.10     # 최대 포지션 손실률
-    stop_loss_ratio: float = 0.08       # 손절 비율
-    take_profit_ratio: float = 0.15     # 익절 비율
+    stop_loss_percent: float = 5.0  # 손절매 %
+    take_profit_percent: float = 10.0  # 익절 %
+    max_daily_loss: float = 100000  # 일일 최대 손실
     
-    # 매매 주기
-    analysis_interval: int = 180        # 분석 주기 (초)
-    min_order_amount: int = 5000        # 최소 주문 금액
+    # 거래 제한
+    max_trades_per_day: int = 20  # 일일 최대 거래 수
+    trade_cooldown_minutes: int = 30  # 거래 쿨다운 (분)
+    
+    # 대상 코인
+    target_coins: List[str] = field(default_factory=lambda: [
+        "KRW-BTC", "KRW-ETH", "KRW-XRP", "KRW-ADA", "KRW-DOT"
+    ])
 
 @dataclass
-class AnalysisConfig:
-    """분석 관련 설정"""
-    target_coins: List[str] = None      # 분석 대상 코인
-    timeframes: List[str] = None        # 시간봉 종류
-    
-    # 기술적 지표 설정
+class IndicatorConfig:
+    """기술적 지표 설정"""
+    # RSI 설정
     rsi_period: int = 14
-    rsi_oversold: int = 30
-    rsi_overbought: int = 70
+    rsi_oversold: float = 30.0
+    rsi_overbought: float = 70.0
     
+    # MACD 설정
     macd_fast: int = 12
     macd_slow: int = 26
     macd_signal: int = 9
     
-    ma_short: int = 5
-    ma_long: int = 20
+    # 이동평균 설정
+    ma_short: int = 20
+    ma_long: int = 50
     
-    # 점수 시스템
-    min_score_threshold: int = 75       # 최소 진입 점수
-    max_score: int = 100               # 최대 점수
-    
-    def __post_init__(self):
-        if self.target_coins is None:
-            self.target_coins = [
-                'KRW-BTC', 'KRW-ETH', 'KRW-SOL', 'KRW-ADA',
-                'KRW-MATIC', 'KRW-ATOM', 'KRW-DOT', 'KRW-AVAX'
-            ]
-        
-        if self.timeframes is None:
-            self.timeframes = ['minute1', 'minute3', 'minute5']
+    # 볼린저 밴드
+    bb_period: int = 20
+    bb_std: float = 2.0
 
 @dataclass
-class DatabaseConfig:
-    """데이터베이스 설정"""
-    db_path: str = "data/coinbot.db"
-    backup_interval: int = 3600         # 백업 주기 (초)
-    log_retention_days: int = 30        # 로그 보존 기간
-
-@dataclass
-class NotificationConfig:
-    """알림 설정"""
-    telegram_enabled: bool = True
-    email_enabled: bool = False
+class SystemConfig:
+    """시스템 설정"""
+    # 데이터 수집
+    data_interval: str = "minute1"  # 1분봉
+    lookback_days: int = 30  # 과거 데이터 일수
     
-    # 알림 주기
-    trade_notifications: bool = True    # 거래 알림
-    portfolio_update_interval: int = 3600  # 포트폴리오 업데이트 주기
-    error_notifications: bool = True    # 오류 알림
+    # 로깅
+    log_level: str = "INFO"
+    log_file: str = "logs/trading_bot.log"
+    
+    # 모니터링
+    health_check_interval: int = 60  # 헬스체크 간격 (초)
+    telegram_alert_interval: int = 300  # 텔레그램 알림 간격 (초)
+    
+    # 백업
+    backup_interval_hours: int = 24
+    max_backup_files: int = 7
 
 @dataclass
-class DashboardConfig:
-    """대시보드 설정"""
-    host: str = "0.0.0.0"
-    port: int = 8050
-    debug: bool = False
-    auto_refresh_interval: int = 30     # 자동 새로고침 (초)
+class APIConfig:
+    """API 설정"""
+    # 업비트 API
+    upbit_access_key: str = ""
+    upbit_secret_key: str = ""
+    
+    # 텔레그램 API
+    telegram_bot_token: str = ""
+    telegram_chat_id: str = ""
+    
+    # API 제한
+    api_request_delay: float = 0.1  # API 요청 간격 (초)
+    max_retries: int = 3  # 최대 재시도 횟수
 
 class Settings:
-    """통합 설정 클래스"""
+    """통합 설정 관리 클래스"""
     
-    def __init__(self):
-        # 환경변수 검증
-        self._validate_env_vars()
+    def __init__(self, config_file: Optional[str] = None, safe_mode: bool = False):
+        self.safe_mode = safe_mode
+        self.config_file = config_file or str(PROJECT_ROOT / "config" / "settings.json")
         
-        # 각 설정 섹션 초기화
+        # 환경 변수 로드
+        self.load_environment()
+        
+        # 설정 로드
+        self.load_settings()
+        
+        # 설정 검증
+        self.validate_settings()
+    
+    def load_environment(self):
+        """환경 변수 로드"""
+        env_file = PROJECT_ROOT / ".env"
+        if env_file.exists():
+            load_dotenv(env_file)
+    
+    def load_settings(self):
+        """설정 파일 로드"""
+        # 기본 설정
         self.trading = TradingConfig()
-        self.analysis = AnalysisConfig()
-        self.database = DatabaseConfig()
-        self.notification = NotificationConfig()
-        self.dashboard = DashboardConfig()
+        self.indicators = IndicatorConfig()
+        self.system = SystemConfig()
+        self.api = APIConfig()
         
-        # API 설정
-        self.upbit_access_key = os.getenv('UPBIT_ACCESS_KEY')
-        self.upbit_secret_key = os.getenv('UPBIT_SECRET_KEY')
-        self.telegram_bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
-        self.telegram_chat_id = os.getenv('TELEGRAM_CHAT_ID')
+        # 환경 변수에서 API 설정 로드
+        self.api.upbit_access_key = os.getenv("UPBIT_ACCESS_KEY", "")
+        self.api.upbit_secret_key = os.getenv("UPBIT_SECRET_KEY", "")
+        self.api.telegram_bot_token = os.getenv("TELEGRAM_BOT_TOKEN", "")
+        self.api.telegram_chat_id = os.getenv("TELEGRAM_CHAT_ID", "")
         
-        # 환경 설정
-        self.environment = os.getenv('ENVIRONMENT', 'development')
-        self.log_level = os.getenv('LOG_LEVEL', 'INFO')
+        # 설정 파일에서 추가 설정 로드
+        if Path(self.config_file).exists():
+            try:
+                with open(self.config_file, 'r', encoding='utf-8') as f:
+                    config_data = json.load(f)
+                    self.update_from_dict(config_data)
+            except Exception as e:
+                logging.warning(f"설정 파일 로드 실패: {e}")
         
-        # 프로젝트 경로
-        self.project_root = Path(__file__).parent.parent
-        self.data_dir = self.project_root / "data"
-        self.logs_dir = self.data_dir / "logs"
-        
-        # 디렉토리 생성
-        self._create_directories()
-        
-        # 환경별 설정 조정
-        self._adjust_for_environment()
+        # 안전 모드 설정 적용
+        if self.safe_mode:
+            self.apply_safe_mode()
     
-    def _validate_env_vars(self):
-        """필수 환경변수 검증"""
-        required_vars = [
-            'UPBIT_ACCESS_KEY',
-            'UPBIT_SECRET_KEY'
-        ]
+    def apply_safe_mode(self):
+        """안전 모드 설정 적용"""
+        # 거래 금액을 최소 금액보다 크게 설정
+        self.trading.trade_amount = 10000  # 최소 금액보다 크게
+        self.trading.max_position_size = 50000
+        self.trading.max_daily_loss = 20000
         
-        missing_vars = []
-        for var in required_vars:
-            if not os.getenv(var):
-                missing_vars.append(var)
+        # 보수적인 지표 설정
+        self.indicators.rsi_oversold = 25.0
+        self.indicators.rsi_overbought = 75.0
         
-        if missing_vars:
-            raise ValueError(f"필수 환경변수가 설정되지 않았습니다: {missing_vars}")
-    
-    def _create_directories(self):
-        """필요한 디렉토리 생성"""
-        directories = [
-            self.data_dir,
-            self.logs_dir,
-            self.data_dir / "trades",
-            self.data_dir / "strategies", 
-            self.data_dir / "backups"
-        ]
+        # 알림 간격 단축
+        self.system.telegram_alert_interval = 60
         
-        for directory in directories:
-            directory.mkdir(parents=True, exist_ok=True)
+        logging.info("안전 모드가 적용되었습니다.")
     
-    def _adjust_for_environment(self):
-        """환경별 설정 조정"""
-        if self.environment == 'production':
-            # 운영환경에서는 더 보수적으로
-            self.trading.max_daily_loss = 0.05
-            self.trading.stop_loss_ratio = 0.06
-            self.analysis.min_score_threshold = 80
-            self.dashboard.debug = False
-            
-        elif self.environment == 'development':
-            # 개발환경에서는 더 관대하게
-            self.trading.analysis_interval = 60  # 1분마다 분석
-            self.dashboard.debug = True
-            self.dashboard.auto_refresh_interval = 10
+    def update_from_dict(self, config_dict: Dict[str, Any]):
+        """딕셔너리에서 설정 업데이트"""
+        if "trading" in config_dict:
+            for key, value in config_dict["trading"].items():
+                if hasattr(self.trading, key):
+                    setattr(self.trading, key, value)
+        
+        if "indicators" in config_dict:
+            for key, value in config_dict["indicators"].items():
+                if hasattr(self.indicators, key):
+                    setattr(self.indicators, key, value)
+        
+        if "system" in config_dict:
+            for key, value in config_dict["system"].items():
+                if hasattr(self.system, key):
+                    setattr(self.system, key, value)
     
-    def get_target_coins(self) -> List[str]:
-        """분석 대상 코인 리스트 반환"""
-        return self.analysis.target_coins.copy()
+    def validate_settings(self):
+        """설정 검증"""
+        errors = []
+        
+        # API 키 검증
+        if not self.api.upbit_access_key:
+            errors.append("UPBIT_ACCESS_KEY가 설정되지 않았습니다")
+        if not self.api.upbit_secret_key:
+            errors.append("UPBIT_SECRET_KEY가 설정되지 않았습니다")
+        if not self.api.telegram_bot_token:
+            errors.append("TELEGRAM_BOT_TOKEN이 설정되지 않았습니다")
+        if not self.api.telegram_chat_id:
+            errors.append("TELEGRAM_CHAT_ID가 설정되지 않았습니다")
+        
+        # 거래 설정 검증
+        if self.trading.trade_amount < self.trading.min_trade_amount:
+            errors.append(f"거래 금액이 최소 금액({self.trading.min_trade_amount})보다 작습니다")
+        
+        if self.trading.stop_loss_percent <= 0 or self.trading.stop_loss_percent > 50:
+            errors.append("손절매 비율이 잘못되었습니다 (0-50% 범위)")
+        
+        # 지표 설정 검증
+        if self.indicators.rsi_period < 5 or self.indicators.rsi_period > 50:
+            errors.append("RSI 기간이 잘못되었습니다 (5-50 범위)")
+        
+        if errors:
+            error_msg = "설정 검증 실패:\n" + "\n".join(f"- {error}" for error in errors)
+            raise ValueError(error_msg)
     
-    def get_trading_pairs(self) -> Dict[str, Dict]:
-        """거래 페어별 설정 반환"""
-        pairs = {}
-        for coin in self.analysis.target_coins:
-            pairs[coin] = {
-                'min_order_amount': self.trading.min_order_amount,
-                'stop_loss': self.trading.stop_loss_ratio,
-                'take_profit': self.trading.take_profit_ratio
+    def save_settings(self, file_path: Optional[str] = None):
+        """설정을 파일로 저장"""
+        save_path = file_path or self.config_file
+        
+        config_data = {
+            "trading": {
+                "trade_amount": self.trading.trade_amount,
+                "max_position_size": self.trading.max_position_size,
+                "stop_loss_percent": self.trading.stop_loss_percent,
+                "take_profit_percent": self.trading.take_profit_percent,
+                "target_coins": self.trading.target_coins
+            },
+            "indicators": {
+                "rsi_period": self.indicators.rsi_period,
+                "rsi_oversold": self.indicators.rsi_oversold,
+                "rsi_overbought": self.indicators.rsi_overbought,
+                "macd_fast": self.indicators.macd_fast,
+                "macd_slow": self.indicators.macd_slow,
+                "macd_signal": self.indicators.macd_signal
+            },
+            "system": {
+                "log_level": self.system.log_level,
+                "data_interval": self.system.data_interval,
+                "lookback_days": self.system.lookback_days
             }
-        return pairs
+        }
+        
+        # 설정 파일 디렉토리 생성
+        Path(save_path).parent.mkdir(parents=True, exist_ok=True)
+        
+        with open(save_path, 'w', encoding='utf-8') as f:
+            json.dump(config_data, f, indent=2, ensure_ascii=False)
     
-    def update_trading_config(self, **kwargs):
-        """매매 설정 동적 업데이트"""
-        for key, value in kwargs.items():
-            if hasattr(self.trading, key):
-                setattr(self.trading, key, value)
-    
-    def get_analysis_config(self) -> Dict[str, Any]:
-        """분석 설정을 딕셔너리로 반환"""
+    def get_coin_config(self, symbol: str) -> Dict[str, Any]:
+        """특정 코인에 대한 설정 반환"""
         return {
-            'rsi_period': self.analysis.rsi_period,
-            'rsi_oversold': self.analysis.rsi_oversold,
-            'rsi_overbought': self.analysis.rsi_overbought,
-            'macd_fast': self.analysis.macd_fast,
-            'macd_slow': self.analysis.macd_slow,
-            'macd_signal': self.analysis.macd_signal,
-            'ma_short': self.analysis.ma_short,
-            'ma_long': self.analysis.ma_long
+            "trade_amount": self.trading.trade_amount,
+            "stop_loss": self.trading.stop_loss_percent,
+            "take_profit": self.trading.take_profit_percent,
+            "rsi_oversold": self.indicators.rsi_oversold,
+            "rsi_overbought": self.indicators.rsi_overbought
         }
     
-    def is_production(self) -> bool:
-        """운영환경 여부 확인"""
-        return self.environment == 'production'
+    def is_trading_allowed(self) -> bool:
+        """거래 허용 여부 확인"""
+        if self.safe_mode:
+            return False  # 안전 모드에서는 실제 거래 금지
+        
+        # API 키가 있는지 확인
+        return bool(self.api.upbit_access_key and self.api.upbit_secret_key)
     
-    def is_development(self) -> bool:
-        """개발환경 여부 확인"""
-        return self.environment == 'development'
+    def get_log_config(self) -> Dict[str, Any]:
+        """로깅 설정 반환"""
+        return {
+            "level": self.system.log_level,
+            "file": self.system.log_file,
+            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        }
     
-    def __str__(self):
-        """설정 정보 출력"""
+    def __str__(self) -> str:
+        """설정 정보 문자열 표현"""
         return f"""
-CoinBot Settings:
-- Environment: {self.environment}
-- Initial Capital: {self.trading.initial_capital:,}원
-- Target Capital: {self.trading.target_capital:,}원
-- Max Positions: {self.trading.max_positions}
-- Analysis Interval: {self.trading.analysis_interval}초
-- Target Coins: {len(self.analysis.target_coins)}개
-- Min Score Threshold: {self.analysis.min_score_threshold}점
-"""
+트레이딩 봇 설정:
+- 모드: {'안전 모드' if self.safe_mode else '실제 거래'}
+- 거래 금액: {self.trading.trade_amount:,}원
+- 최대 포지션: {self.trading.max_position_size:,}원
+- 손절매: {self.trading.stop_loss_percent}%
+- 대상 코인: {len(self.trading.target_coins)}개
+- RSI 기간: {self.indicators.rsi_period}
+        """
 
 # 전역 설정 인스턴스
-settings = Settings()
+_settings_instance = None
+
+def get_settings(safe_mode: bool = False) -> Settings:
+    """설정 인스턴스 반환 (싱글톤)"""
+    global _settings_instance
+    if _settings_instance is None:
+        _settings_instance = Settings(safe_mode=safe_mode)
+    return _settings_instance
+
+def reload_settings(safe_mode: bool = False):
+    """설정 다시 로드"""
+    global _settings_instance
+    _settings_instance = Settings(safe_mode=safe_mode)
+    return _settings_instance
+
+# 개발용 테스트 함수
+def test_settings():
+    """설정 테스트"""
+    try:
+        settings = Settings(safe_mode=True)
+        print("설정 로드 성공!")
+        print(settings)
+        return True
+    except Exception as e:
+        print(f"설정 로드 실패: {e}")
+        return False
+
+# 하위 호환성을 위한 전역 settings 인스턴스
+settings = None
+
+def init_settings(safe_mode: bool = False):
+    """설정 초기화"""
+    global settings
+    settings = Settings(safe_mode=safe_mode)
+    return settings
+
+# 기본 설정 인스턴스 생성 (즉시 생성하지 않음)
+def get_default_settings():
+    """기본 설정 반환"""
+    global settings
+    if settings is None:
+        # 안전 모드 기본값으로 초기화
+        settings = Settings(safe_mode=True)
+    return settings
+
+if __name__ == "__main__":
+    # 설정 테스트 실행
+    print("설정 파일 테스트 중...")
+    try:
+        test_settings = Settings(safe_mode=True)
+        print("설정 로드 성공!")
+        print(test_settings)
+        print("모든 설정이 정상적으로 로드되었습니다.")
+    except Exception as e:
+        print(f"설정 로드 실패: {e}")
+        print("설정에 문제가 있습니다. 위 오류를 확인하세요.")

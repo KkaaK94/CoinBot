@@ -1,0 +1,226 @@
+#!/usr/bin/env python3
+"""
+트레이딩 봇 메인 실행 파일
+- 모든 컴포넌트 통합
+- 안전 모드 지원
+- 신호 처리
+- 예외 처리
+"""
+
+import os
+import sys
+import signal
+import argparse
+import asyncio
+import logging
+import time
+from datetime import datetime
+from pathlib import Path
+
+# 프로젝트 루트 디렉토리를 Python 경로에 추가
+PROJECT_ROOT = Path(__file__).parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+# 설정 먼저 로드
+from config.settings import Settings, init_settings, get_default_settings
+from core.data_collector import DataCollector
+from core.analyzer import Analyzer
+from core.strategy_engine import StrategyEngine
+from core.trader import Trader
+from core.risk_manager import RiskManager
+from utils.logger import setup_logger
+from utils.telegram_bot import TelegramBot
+from utils.database import Database
+from learning.performance_tracker import PerformanceTracker
+
+class TradingBot:
+    """통합 트레이딩 봇 클래스"""
+    
+    def __init__(self, safe_mode: bool = False):
+        """트레이딩 봇 초기화"""
+        self.safe_mode = safe_mode
+        self.running = False
+        self.start_time = datetime.now()
+        
+        print(f"🎯 트레이딩 봇 초기화 시작 - 모드: {'🛡️ 안전' if safe_mode else '💰 실제거래'}")
+        
+        # 설정 초기화
+        try:
+            self.settings = init_settings(safe_mode=safe_mode)
+            print("✅ 설정 로드 완료")
+        except Exception as e:
+            print(f"❌ 설정 로드 실패: {e}")
+            raise
+        
+        # 로그 디렉토리 생성
+        log_dir = Path("logs")
+        log_dir.mkdir(exist_ok=True)
+        
+        # 로깅 설정
+        try:
+            self.logger = setup_logger(
+                name="TradingBot",
+                level=self.settings.system.log_level,
+                log_file=self.settings.system.log_file
+            )
+            print("✅ 로깅 설정 완료")
+        except Exception as e:
+            print(f"❌ 로깅 설정 실패: {e}")
+            # 기본 로깅 설정
+            logging.basicConfig(level=logging.INFO)
+            self.logger = logging.getLogger("TradingBot")
+        
+        # 컴포넌트 초기화
+        self.initialize_components()
+        
+        # 신호 핸들러 등록
+        signal.signal(signal.SIGINT, self.signal_handler)
+        signal.signal(signal.SIGTERM, self.signal_handler)
+        
+        self.logger.info(f"트레이딩 봇 초기화 완료 - 모드: {'안전' if safe_mode else '실제거래'}")
+        print("🚀 트레이딩 봇 초기화 완료!")
+    
+    def initialize_components(self):
+        """컴포넌트 초기화"""
+        try:
+            print("📦 컴포넌트 초기화 중...")
+            
+            # 데이터베이스 초기화
+            try:
+                self.database = Database()
+                print("✅ 데이터베이스 초기화 완료")
+            except Exception as e:
+                print(f"⚠️ 데이터베이스 초기화 실패: {e}")
+                self.database = None
+            
+            # 텔레그램 봇 초기화
+            try:
+                if self.settings.api.telegram_bot_token and self.settings.api.telegram_chat_id:
+                    self.telegram_bot = TelegramBot(
+                        token=self.settings.api.telegram_bot_token,
+                        chat_id=self.settings.api.telegram_chat_id
+                    )
+                    print("✅ 텔레그램 봇 초기화 완료")
+                else:
+                    self.telegram_bot = None
+                    print("⚠️ 텔레그램 설정이 없습니다")
+            except Exception as e:
+                print(f"⚠️ 텔레그램 봇 초기화 실패: {e}")
+                self.telegram_bot = None
+            
+            # 핵심 컴포넌트들
+            try:
+                self.data_collector = DataCollector()
+                print("✅ 데이터 수집기 초기화 완료")
+            except Exception as e:
+                print(f"❌ 데이터 수집기 초기화 실패: {e}")
+                raise
+            
+            try:
+                self.analyzer = Analyzer()
+                print("✅ 분석기 초기화 완료")
+            except Exception as e:
+                print(f"❌ 분석기 초기화 실패: {e}")
+                raise
+            
+            try:
+                self.strategy_engine = StrategyEngine()
+                print("✅ 전략 엔진 초기화 완료")
+            except Exception as e:
+                print(f"❌ 전략 엔진 초기화 실패: {e}")
+                raise
+            
+            try:
+                self.risk_manager = RiskManager()
+                print("✅ 리스크 관리자 초기화 완료")
+            except Exception as e:
+                print(f"❌ 리스크 관리자 초기화 실패: {e}")
+                raise
+            
+            try:
+                self.trader = Trader(safe_mode=self.safe_mode)
+                print("✅ 트레이더 초기화 완료")
+            except Exception as e:
+                print(f"❌ 트레이더 초기화 실패: {e}")
+                raise
+            
+            try:
+                self.performance_tracker = PerformanceTracker()
+                print("✅ 성능 추적기 초기화 완료")
+            except Exception as e:
+                print(f"⚠️ 성능 추적기 초기화 실패: {e}")
+                self.performance_tracker = None
+            
+            print("🎉 모든 컴포넌트 초기화 완료!")
+            
+        except Exception as e:
+            print(f"❌ 컴포넌트 초기화 실패: {e}")
+            if hasattr(self, 'logger'):
+                self.logger.error(f"컴포넌트 초기화 실패: {e}")
+            raise
+    
+    def signal_handler(self, signum, frame):
+        """신호 핸들러"""
+        signal_names = {
+            signal.SIGINT: "SIGINT (Ctrl+C)",
+            signal.SIGTERM: "SIGTERM"
+        }
+        
+        signal_name = signal_names.get(signum, f"Signal {signum}")
+        print(f"\n📨 {signal_name} 신호 수신 - 봇 종료 중...")
+        
+        if hasattr(self, 'logger'):
+            self.logger.info(f"신호 {signal_name} 수신 - 봇 종료 중...")
+        
+        self.stop()
+    
+    async def send_startup_message(self):
+        """시작 메시지 발송"""
+        if self.telegram_bot:
+            try:
+                uptime = datetime.now() - self.start_time
+                message = f"""
+🎯 **트레이딩 봇 시작**
+
+📊 **설정 정보**
+• 모드: {'🛡️ 안전 모드 (모의거래)' if self.safe_mode else '💰 실제 거래 모드'}
+• 거래 금액: {self.settings.trading.trade_amount:,}원
+• 최대 포지션: {self.settings.trading.max_position_size:,}원
+• 손절매: {self.settings.trading.stop_loss_percent}%
+• 익절: {self.settings.trading.take_profit_percent}%
+• 대상 코인: {len(self.settings.trading.target_coins)}개
+
+📈 **대상 코인 목록**
+{', '.join(self.settings.trading.target_coins)}
+
+⏰ **시작 시간**: {self.start_time.strftime('%Y-%m-%d %H:%M:%S')}
+
+🚀 **봇이 정상적으로 시작되었습니다!**
+
+{f'⚠️ 안전 모드에서는 실제 거래가 이루어지지 않습니다.' if self.safe_mode else '💰 실제 거래가 시작됩니다. 신중하게 모니터링하세요.'}
+"""
+                await self.telegram_bot.send_message(message)
+                print("📱 텔레그램 시작 메시지 발송 완료")
+                
+            except Exception as e:
+                print(f"⚠️ 텔레그램 시작 메시지 발송 실패: {e}")
+                if hasattr(self, 'logger'):
+                    self.logger.error(f"시작 메시지 발송 실패: {e}")
+    
+    def stop(self):
+        """봇 중지"""
+        print("🛑 트레이딩 봇 중지 중...")
+        if hasattr(self, 'logger'):
+            self.logger.info("트레이딩 봇 중지 중...")
+        
+        self.running = False
+        
+        # 정리 작업
+        try:
+            if hasattr(self, 'database') and self.database:
+                self.database.close()
+                print("✅ 데이터베이스 연결 종료")
+        except Exception as e:
+            print(f"⚠️ 데이터베이스 종료 중 오류: {e}")
+        
+        print("✅ 트레이딩 봇 중지 완료")

@@ -1,0 +1,65 @@
+{
+  "_comment": "트레이딩 봇 모니터링 설정",
+  
+  "bot_script": "main.py",
+  "check_interval": 30,
+  "restart_threshold": 3,
+  "web_port": 8888,
+  "auto_restart": true,
+  "telegram_alerts": true,
+  
+  "thresholds": {
+    "cpu_alert_threshold": 80,
+    "memory_alert_threshold": 500,
+    "disk_alert_threshold": 90,
+    "network_threshold_mb": 100
+  },
+  
+  "logging": {
+    "log_file": "logs/monitor.log",
+    "log_level": "INFO",
+    "max_log_size_mb": 10,
+    "backup_count": 5
+  },
+  
+  "data_retention": {
+    "metrics_retention_hours": 24,
+    "log_retention_days": 7,
+    "cleanup_interval_hours": 6
+  },
+  
+  "alerts": {
+    "telegram_enabled": true,
+    "email_enabled": false,
+    "webhook_enabled": false,
+    "alert_cooldown_minutes": 10,
+    "critical_alerts": [
+      "bot_down",
+      "high_cpu",
+      "high_memory",
+      "disk_full"
+    ]
+  },
+  
+  "performance": {
+    "max_cpu_samples": 100,
+    "max_memory_samples": 100,
+    "metrics_compression": true,
+    "background_tasks": true
+  },
+  
+  "security": {
+    "web_auth_enabled": false,
+    "allowed_ips": ["127.0.0.1", "::1"],
+    "api_rate_limit": 60,
+    "secure_headers": true
+  },
+  
+  "advanced": {
+    "process_monitoring": true,
+    "network_monitoring": true,
+    "disk_monitoring": true,
+    "custom_metrics": false,
+    "export_prometheus": false
+  }
+}
