@@ -16,6 +16,21 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+# ⚠️ 자동 업데이트 시스템 유지 필수!
+try:
+    from utils.auto_updater import log_config_change, log_bug_fix, log_feature_add
+    from utils.enhanced_error_handler import handle_data_collection_errors, get_error_handler
+    AUTO_UPDATER_AVAILABLE = True
+except ImportError:
+    print("⚠️ 고도화 모듈 없음 - 기본 로깅 사용")
+    def log_config_change(*args, **kwargs): pass
+    def log_bug_fix(*args, **kwargs): pass
+    def log_feature_add(*args, **kwargs): pass
+    def handle_data_collection_errors(*args, **kwargs):
+        def decorator(func): return func
+        return decorator
+    AUTO_UPDATER_AVAILABLE = False
+    
 # 프로젝트 루트 디렉토리를 Python 경로에 추가
 PROJECT_ROOT = Path(__file__).parent
 sys.path.insert(0, str(PROJECT_ROOT))
