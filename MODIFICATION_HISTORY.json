@@ -1,0 +1,41 @@
+{
+  "project_name": "CoinBot",
+  "created": "2025-06-08T05:35:19.519751",
+  "modifications": [
+    {
+      "timestamp": "2025-06-08T05:35:19.519670",
+      "file": "core/strategy_engine.py",
+      "change_type": "CONFIG_CHANGE",
+      "description": "매매 활성화를 위한 조건 완화 (테스트)",
+      "new_values": {
+        "min_score": {
+          "old": 75,
+          "new": 45
+        },
+        "confidence": {
+          "old": 0.6,
+          "new": 0.4
+        },
+        "reason": "24시간 매매 없음 문제 해결"
+      },
+      "session_id": "ai_session_0608_0535"
+    },
+    {
+      "timestamp": "2025-06-08T05:35:19.520880",
+      "file": "main.py",
+      "change_type": "BUG_FIX",
+      "description": "데이터 수집 실패 시 재시도 로직 추가 (테스트)",
+      "new_values": {},
+      "session_id": "ai_session_0608_0535"
+    },
+    {
+      "timestamp": "2025-06-08T05:35:19.522107",
+      "file": "utils/auto_updater.py",
+      "change_type": "FEATURE_ADD",
+      "description": "자동 상태 업데이트 시스템 구축 완료 (테스트)",
+      "new_values": {},
+      "session_id": "ai_session_0608_0535"
+    }
+  ],
+  "last_updated": "2025-06-08T05:35:19.522208"
+}

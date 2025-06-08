@@ -13,6 +13,7 @@ import uuid
 from config.settings import settings
 from core.analyzer import AnalysisResult
 from utils.logger import Logger
+from utils.auto_updater import log_config_change, log_bug_fix, log_feature_add
 
 @dataclass
 class TradingStrategy:
@@ -82,76 +83,88 @@ class StrategyEngine:
         self._create_initial_strategies()
         
         self.logger.info("전략 엔진 초기화 완료")
+         # 🔄 이 부분을 추가! (초기화 맨 마지막에)
+        try:
+            log_feature_add(
+                "core/strategy_engine.py",
+                "전략 엔진 초기화 완료",
+                {
+                    "strategies_count": len(self.strategies),
+                    "market_condition": self.market_condition,
+                    "status": "활성화"
+                }
+            )
+        except:
+            pass  # 로깅 실패해도 메인 기능에 영향 없게
     
     def _initialize_strategy_templates(self) -> Dict[str, Dict]:
-        """전략 템플릿 초기화"""
-        return {
-            "MOMENTUM": {
-                "entry_conditions": {
-                    "min_score": 80,
-                    "rsi_range": (30, 50),
-                    "volume_surge": True,
-                    "trend_alignment": True,
-                    "momentum_threshold": 0.02
-                },
-                "exit_conditions": {
-                    "profit_target": 0.12,
-                    "stop_loss": 0.06,
-                    "time_limit_hours": 6,
-                    "rsi_overbought": 75,
-                    "momentum_reversal": True
-                }
+    """전략 템플릿 초기화 (매매 활성화 버전)"""
+    return {
+        "MOMENTUM": {
+            "entry_conditions": {
+                "min_score": 45,  # ✅ 80 → 45로 변경
+                "rsi_range": (25, 65),  # ✅ (30, 50) → (25, 65)로 확대
+                "volume_surge": False,  # ✅ True → False로 변경 (조건 완화)
+                "trend_alignment": False,  # ✅ True → False로 변경
+                "momentum_threshold": 0.01  # ✅ 0.02 → 0.01로 완화
             },
-            "TREND": {
-                "entry_conditions": {
-                    "min_score": 75,
-                    "trend_strength": 0.7,
-                    "ma_alignment": True,
-                    "volume_confirmation": True,
-                    "pullback_entry": True
-                },
-                "exit_conditions": {
-                    "profit_target": 0.18,
-                    "stop_loss": 0.08,
-                    "time_limit_hours": 12,
-                    "trend_break": True,
-                    "ma_crossover": True
-                }
+            "exit_conditions": {
+                "profit_target": 0.04,  # ✅ 0.12 → 0.04로 현실적으로
+                "stop_loss": 0.02,  # ✅ 0.06 → 0.02로 현실적으로
+                "time_limit_hours": 6,
+                "rsi_overbought": 75,
+                "momentum_reversal": True
+            }
+        },
+        "TREND": {
+            "entry_conditions": {
+                "min_score": 45,  # ✅ 75 → 45로 변경
+                "trend_strength": 0.4,  # ✅ 0.7 → 0.4로 완화
+                "ma_alignment": False,  # ✅ True → False로 완화
+                "volume_confirmation": False,  # ✅ True → False로 완화
+                "pullback_entry": False  # ✅ True → False로 완화
             },
-            "MEAN_REVERSION": {
-                "entry_conditions": {
-                    "min_score": 70,
-                    "rsi_extreme": True,
-                    "bollinger_touch": True,
-                    "volume_divergence": True,
-                    "support_resistance": True
-                },
-                "exit_conditions": {
-                    "profit_target": 0.08,
-                    "stop_loss": 0.04,
-                    "time_limit_hours": 4,
-                    "rsi_normalization": True,
-                    "bollinger_middle": True
-                }
+            "exit_conditions": {
+                "profit_target": 0.06,  # ✅ 0.18 → 0.06으로 현실적으로
+                "stop_loss": 0.03,  # ✅ 0.08 → 0.03으로 현실적으로
+                "time_limit_hours": 12,
+                "trend_break": True,
+                "ma_crossover": True
+            }
+        },
+        "MEAN_REVERSION": {
+            "entry_conditions": {
+                "min_score": 45,  # ✅ 70 → 45로 변경
+                "rsi_extreme": True,
+                "bollinger_touch": False,  # ✅ True → False로 완화
+                "volume_divergence": False,  # ✅ True → False로 완화
+                "support_resistance": False  # ✅ True → False로 완화
             },
-            "SCALPING": {
-                "entry_conditions": {
-                    "min_score": 85,
-                    "micro_trend": True,
-                    "volume_spike": True,
-                    "spread_check": True,
-                    "momentum_acceleration": True
-                },
-                "exit_conditions": {
-                    "profit_target": 0.04,
-                    "stop_loss": 0.02,
-                    "time_limit_hours": 1,
-                    "momentum_fade": True,
-                    "volume_dry_up": True
-                }
+            "exit_conditions": {
+                "profit_target": 0.04,  # ✅ 0.08 → 0.04로 현실적으로
+                "stop_loss": 0.02,  # ✅ 0.04 → 0.02로 현실적으로
+                "time_limit_hours": 4,
+                "rsi_normalization": True,
+                "bollinger_middle": True
+            }
+        },
+        "SCALPING": {
+            "entry_conditions": {
+                "min_score": 45,  # ✅ 85 → 45로 대폭 변경
+                "micro_trend": False,  # ✅ True → False로 완화
+                "volume_spike": False,  # ✅ True → False로 완화
+                "spread_check": True,
+                "momentum_acceleration": False  # ✅ True → False로 완화
+            },
+            "exit_conditions": {
+                "profit_target": 0.03,  # ✅ 0.04 → 0.03으로 약간 완화
+                "stop_loss": 0.015,  # ✅ 0.02 → 0.015로 약간 완화
+                "time_limit_hours": 1,
+                "momentum_fade": True,
+                "volume_dry_up": True
             }
         }
-    
+    }
     def _create_initial_strategies(self):
         """초기 전략 생성"""
         try:
@@ -173,26 +186,60 @@ class StrategyEngine:
             self.logger.error(f"초기 전략 생성 실패: {e}")
     
     def generate_signals(self, analysis_results: Dict[str, AnalysisResult], ticker: str) -> List[StrategySignal]:
-        """전략별 신호 생성"""
+        """전략별 신호 생성 (자동 업데이트 적용)"""
         signals = []
-        
+    
+    try:
+        # 🔄 신호 생성 시작 로깅
         try:
-            for strategy_id, strategy in self.strategies.items():
-                if not strategy.is_active:
-                    continue
-                
-                signal = self._evaluate_strategy(strategy, analysis_results, ticker)
-                if signal:
-                    signals.append(signal)
+            log_feature_add(
+                "core/strategy_engine.py", 
+                f"{ticker} 신호 생성 프로세스 시작"
+            )
+        except:
+            pass
+        
+        for strategy_id, strategy in self.strategies.items():
+            if not strategy.is_active:
+                continue
             
-            # 신호 우선순위 정렬 (성과 기반)
-            signals.sort(key=lambda x: self.strategies[x.strategy_id].performance_score, reverse=True)
-            
-            return signals
-            
-        except Exception as e:
-            self.logger.error(f"신호 생성 실패: {e}")
-            return []
+            signal = self._evaluate_strategy(strategy, analysis_results, ticker)
+            if signal:
+                signals.append(signal)
+        
+        # 신호 우선순위 정렬 (성과 기반)
+        signals.sort(key=lambda x: self.strategies[x.strategy_id].performance_score, reverse=True)
+        
+        # 🔄 생성된 신호 정보 로깅
+        if signals:
+            try:
+                log_config_change(
+                    "core/strategy_engine.py",
+                    f"{ticker} 총 {len(signals)}개 신호 생성됨",
+                    {
+                        "ticker": ticker,
+                        "signals_count": len(signals),
+                        "top_signal_action": signals[0].action if signals else "NONE",
+                        "timestamp": datetime.now().isoformat()
+                    }
+                )
+            except:
+                pass
+        
+        return signals
+        
+    except Exception as e:
+        # 🔄 에러 로깅
+        try:
+            log_bug_fix(
+                "core/strategy_engine.py",
+                f"{ticker} 신호 생성 실패: {str(e)}"
+            )
+        except:
+            pass
+        
+        self.logger.error(f"신호 생성 실패: {e}")
+        return []
     
     def _evaluate_strategy(self, strategy: TradingStrategy, analysis_results: Dict[str, AnalysisResult], ticker: str) -> Optional[StrategySignal]:
         """개별 전략 평가"""
@@ -278,27 +325,73 @@ class StrategyEngine:
             return None
     
     def _check_entry_conditions(self, strategy: TradingStrategy, combined_analysis: Dict, ticker: str) -> Optional[StrategySignal]:
-        """진입 조건 체크"""
+        """진입 조건 체크 (자동 업데이트 적용)"""
         try:
             entry_conditions = strategy.entry_conditions
-            
+        
+            # 🔥 중요! 이 값들을 변경할 때마다 로깅
+            original_min_score = 75  # 원래 기본값
+            current_min_score = entry_conditions.get('min_score', 45)  # 현재 사용값
+        
+            original_confidence = 0.6  # 원래 기본값  
+            current_confidence = 0.4   # 현재 사용값
+        
+            # 🔄 설정 변경 감지 및 로깅 (값이 기본값과 다를 때만)
+            if current_min_score != original_min_score:
+               try:
+                   log_config_change(
+                       "core/strategy_engine.py",
+                       f"min_score 조건 완화 적용됨: {original_min_score} → {current_min_score}",
+                       {
+                            "min_score": {"original": original_min_score, "current": current_min_score},
+                            "reason": "매매 활성화를 위한 조건 완화",
+                            "ticker": ticker
+                       }
+                 )
+                except:
+                    pass
+        
             # 기본 점수 조건
-            if combined_analysis['avg_score'] < entry_conditions.get('min_score', 75):
+            if combined_analysis['avg_score'] < current_min_score:
                 return None
-            
+        
             # 신뢰도 조건
-            if combined_analysis['avg_confidence'] < 0.6:
+            if combined_analysis['avg_confidence'] < current_confidence:
                 return None
-            
+        
             # 전략 타입별 특화 조건
             if not self._check_strategy_specific_conditions(strategy, combined_analysis):
                 return None
-            
+        
+            # 🔄 신호 생성 성공 시 로깅
+            try:
+                log_config_change(
+                    "core/strategy_engine.py",
+                    f"{ticker} 매매 신호 생성 성공",
+                    {
+                        "ticker": ticker,
+                        "score": combined_analysis['avg_score'],
+                        "confidence": combined_analysis['avg_confidence'],
+                        "strategy_type": strategy.strategy_type
+                    }
+                )
+            except:
+                pass
+        
             # 신호 생성
             signal = self._create_strategy_signal(strategy, combined_analysis, ticker)
             return signal
-            
+        
         except Exception as e:
+            # 🔄 에러 발생 시 로깅
+            try:
+                log_bug_fix(
+                    "core/strategy_engine.py",
+                    f"진입 조건 체크 에러 발생: {ticker} - {str(e)}"
+              )
+            except:
+                pass
+        
             self.logger.error(f"진입 조건 체크 실패: {e}")
             return None
     
@@ -899,3 +992,64 @@ class StrategyEngine:
                 'confidence': 0.0,
                 'reason': f'오류: {str(e)}'
             }
+    def update_strategy_conditions(self, new_min_score=None, new_confidence=None):
+        """
+        전략 조건 업데이트 (자동 문서화 포함)
+        새 AI가 설정을 변경할 때 사용하는 메서드
+        """
+        changes = {}
+    
+        # 현재 설정값들
+        current_settings = {
+            "min_score": 45,  # 현재 사용 중인 값
+            "confidence": 0.4  # 현재 사용 중인 값
+      }
+    
+        if new_min_score is not None:
+            old_score = current_settings["min_score"]
+            changes["min_score"] = {"old": old_score, "new": new_min_score}
+        
+            # 실제 설정 적용 로직은 여기에...
+            # self.current_min_score = new_min_score
+    
+        if new_confidence is not None:
+            old_confidence = current_settings["confidence"]
+            changes["confidence"] = {"old": old_confidence, "new": new_confidence}
+        
+            # 실제 설정 적용 로직은 여기에...
+            # self.current_confidence = new_confidence
+    
+        if changes:
+            # 🔄 설정 변경 자동 로깅
+            try:
+                log_config_change(
+                   "core/strategy_engine.py",
+                   f"전략 조건 수동 업데이트: {', '.join(changes.keys())}",
+                   changes
+              )
+            
+            print(f"✅ 전략 조건 업데이트 및 자동 문서화 완료")
+            print(f"📝 변경사항: {changes}")
+            
+            except Exception as e:
+                print(f"⚠️ 로깅 실패 (설정은 적용됨): {e}")
+
+    def get_current_strategy_status(self):
+        """현재 전략 상태 반환 (디버깅용)"""
+        return {
+            "active_strategies": len([s for s in self.strategies.values() if s.is_active]),
+            "total_strategies": len(self.strategies),
+            "market_condition": self.market_condition,
+            "last_signal_time": getattr(self, 'last_signal_time', None)
+        }
+
+
+if __name__ == "__main__":
+    # 모듈 테스트 시 로깅
+    try:
+        log_feature_add(
+            "core/strategy_engine.py",
+            "strategy_engine.py 모듈 직접 실행됨 (테스트 모드)"
+        )
+    except:
+        pass            

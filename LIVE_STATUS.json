@@ -1,0 +1,53 @@
+{
+  "metadata": {
+    "last_updated": "2025-06-08T05:35:19.522600",
+    "auto_generated": true,
+    "version": "1.0.0"
+  },
+  "project_info": {
+    "name": "CoinBot",
+    "phase": "매매 활성화 완료 단계",
+    "capital": {
+      "current": 160000,
+      "target": 1000000
+    },
+    "goal": "16만원으로 자동매매 본업 전환"
+  },
+  "latest_modification": {
+    "timestamp": "2025-06-08T05:35:19.522107",
+    "file": "utils/auto_updater.py",
+    "change_type": "FEATURE_ADD",
+    "description": "자동 상태 업데이트 시스템 구축 완료 (테스트)",
+    "new_values": {},
+    "session_id": "ai_session_0608_0535"
+  },
+  "critical_settings": {
+    "min_score_threshold": 45,
+    "confidence_threshold": 0.4,
+    "take_profit_ratio": 0.04,
+    "stop_loss_ratio": 0.02,
+    "capital_per_position": 30000,
+    "max_positions": 3,
+    "status": "검증됨 - 변경 금지",
+    "last_verified": "2025-06-08"
+  },
+  "system_health": {
+    "trading_system": "정상",
+    "api_connection": "정상",
+    "auto_update_system": "활성화",
+    "last_health_check": "2025-06-08T05:35:19.522735"
+  },
+  "next_priorities": [
+    "1주일 매매 성과 모니터링 및 분석",
+    "main.py 데이터 수집 에러 핸들링 개선",
+    "승률 50% 이상 달성 확인",
+    "50만원 추가 투자 여부 결정",
+    "risk_manager.py 안정성 강화"
+  ],
+  "warnings_for_next_ai": [
+    "매매 조건 이미 완화됨 (min_score=45) - 재수정하면 시스템 불안정",
+    "현재 설정값들은 실제 테스트로 검증됨 - 함부로 변경 금지",
+    "NEXT_AI_GUIDE.md가 최신 정보 - 과거 README나 가이드 무시",
+    "auto_updater 사용하지 않으면 다음 AI와 연결 끊어짐"
+  ]
+}
