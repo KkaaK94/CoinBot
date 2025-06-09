@@ -16,6 +16,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+
 # ⚠️ 자동 업데이트 시스템 유지 필수!
 try:
     from utils.auto_updater import log_config_change, log_bug_fix, log_feature_add
@@ -30,7 +31,7 @@ except ImportError:
         def decorator(func): return func
         return decorator
     AUTO_UPDATER_AVAILABLE = False
-    
+
 # 프로젝트 루트 디렉토리를 Python 경로에 추가
 PROJECT_ROOT = Path(__file__).parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -248,7 +249,16 @@ class TradingBot:
         except Exception as e:
             print(f"⚠️ 성능 추적기 초기화 실패: {e}")
             self.performance_tracker = None
-    
+    @handle_data_collection_errors(max_retries=3)
+    async def collect_market_data_enhanced(self):
+        """고도화된 데이터 수집 (에러 핸들링 적용)"""
+        try:
+            log_feature_add("main.py", "고도화된 데이터 수집 시작")
+        except:
+            pass
+
+        return await self.data_collector.collect_all_data()
+
     def signal_handler(self, signum, frame):
         """신호 핸들러"""
         signal_names = {
@@ -311,20 +321,26 @@ class TradingBot:
                 self.logger.info(f"트레이딩 루프 #{loop_count} 시작")
                 print(f"📊 루프 #{loop_count} - {datetime.now().strftime('%H:%M:%S')}")
                 
-                # 1. 시장 데이터 수집
+                # 1. 시장 데이터 수집 (고도화된 에러 핸들링 적용)
                 try:
-                    market_data = await self.data_collector.collect_all_data()
-                    
+                    # 고도화된 데이터 수집 사용
+                    market_data = await self.collect_market_data_enhanced()
+
                     if not market_data:
-                        self.logger.warning("시장 데이터를 가져올 수 없습니다")
-                        await asyncio.sleep(60)
-                        continue
-                    
+                       self.logger.warning("시장 데이터를 가져올 수 없습니다")
+                       await asyncio.sleep(60)
+                       continue
+
                     self.logger.info(f"시장 데이터 수집 완료: {len(market_data)}개 코인")
-                    
+               
                 except Exception as e:
-                    self.logger.error(f"시장 데이터 수집 실패: {e}")
+                    # 최종 에러 처리 (auto_recovery 실패 시)
+                    self.logger.error(f"데이터 수집 최종 실패: {e}")
                     print(f"⚠️ 데이터 수집 실패: {e}")
+                    try:
+                        log_bug_fix("main.py", f"데이터 수집 최종 실패 처리: {str(e)}")
+                    except:
+                        pass
                     await asyncio.sleep(60)
                     continue
                 
@@ -553,10 +569,9 @@ class RealDataCollector:
                 try:
                     # 현재가 정보
                     price = pyupbit.get_current_price(ticker)
-                    
-                    # 차트 데이터 (일봉)
-                    df = pyupbit.get_ohlcv(ticker, interval="day", count=200)
-                    
+                    # 차트 데이터 (15분봉)
+                    df = pyupbit.get_ohlcv(ticker, interval="minute15", count=200)
+
                     if price and df is not None and not df.empty:
                         result[ticker] = {
                             "price": price,

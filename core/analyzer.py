@@ -164,8 +164,9 @@ class TechnicalAnalyzer:
                 bb_upper=0, bb_middle=0, bb_lower=0, volume_sma=0,
                 stoch_k=50, stoch_d=50
             )
-        def _calculate_rsi(self, prices: pd.Series, period: int = 14) -> float:
-             """RSI 계산"""
+
+    def _calculate_rsi(self, prices: pd.Series, period: int = 14) -> float:
+        """RSI 계산"""
         try:
             delta = prices.diff()
             gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
@@ -283,10 +284,10 @@ class TechnicalAnalyzer:
             }
     
     def _score_rsi(self, rsi: float) -> float:
-        """RSI 점수 (0-25점)"""
-        if 20 <= rsi <= 35:      # 강한 매수 구간
+        """RSI 점수 (0-25점) - 15분봉 최적화"""
+        if 25 <= rsi <= 35:      # 15분봉 강한 매수 구간
             return 25
-        elif 35 < rsi <= 45:     # 약한 매수 구간
+        elif 35 < rsi <= 45:     # 15분봉 약한 매수 구간  
             return 20
         elif 45 < rsi <= 55:     # 중립 구간
             return 10

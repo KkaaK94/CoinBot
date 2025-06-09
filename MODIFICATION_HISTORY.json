@@ -3,73 +3,805 @@
   "created": "2025-06-08T05:35:19.519751",
   "modifications": [
     {
-      "timestamp": "2025-06-08T05:35:19.519670",
+      "timestamp": "2025-06-09T11:30:11.258040",
       "file": "core/strategy_engine.py",
-      "change_type": "CONFIG_CHANGE",
-      "description": "매매 활성화를 위한 조건 완화 (테스트)",
-      "new_values": {
-        "min_score": {
-          "old": 75,
-          "new": 45
-        },
-        "confidence": {
-          "old": 0.6,
-          "new": 0.4
-        },
-        "reason": "24시간 매매 없음 문제 해결"
-      },
-      "session_id": "ai_session_0608_0535"
-    },
-    {
-      "timestamp": "2025-06-08T05:35:19.520880",
-      "file": "main.py",
-      "change_type": "BUG_FIX",
-      "description": "데이터 수집 실패 시 재시도 로직 추가 (테스트)",
-      "new_values": {},
-      "session_id": "ai_session_0608_0535"
-    },
-    {
-      "timestamp": "2025-06-08T05:35:19.522107",
-      "file": "utils/auto_updater.py",
       "change_type": "FEATURE_ADD",
-      "description": "자동 상태 업데이트 시스템 구축 완료 (테스트)",
+      "description": "{'rsi': 74.72271182887873, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 3451850.0, 'ma50': 3445420.0, 'current_price': 3490000.0} 신호 생성 프로세스 시작",
       "new_values": {},
-      "session_id": "ai_session_0608_0535"
+      "session_id": "ai_session_0609_1130"
     },
     {
-      "timestamp": "2025-06-08T06:57:48.573864",
+      "timestamp": "2025-06-09T11:30:11.265125",
       "file": "core/strategy_engine.py",
-      "change_type": "CONFIG_CHANGE",
-      "description": "매매 활성화를 위한 조건 완화 (테스트)",
-      "new_values": {
-        "min_score": {
-          "old": 75,
-          "new": 45
-        },
-        "confidence": {
-          "old": 0.6,
-          "new": 0.4
-        },
-        "reason": "24시간 매매 없음 문제 해결"
-      },
-      "session_id": "ai_session_0608_0657"
-    },
-    {
-      "timestamp": "2025-06-08T06:57:48.575428",
-      "file": "main.py",
-      "change_type": "BUG_FIX",
-      "description": "데이터 수집 실패 시 재시도 로직 추가 (테스트)",
-      "new_values": {},
-      "session_id": "ai_session_0608_0657"
-    },
-    {
-      "timestamp": "2025-06-08T06:57:48.576752",
-      "file": "utils/auto_updater.py",
       "change_type": "FEATURE_ADD",
-      "description": "자동 상태 업데이트 시스템 구축 완료 (테스트)",
+      "description": "{'rsi': 61.4129036712266, 'macd_signal': 'HOLD', 'trend': 'NEUTRAL', 'ma20': 3092.45, 'ma50': 3093.88, 'current_price': 3111.0} 신호 생성 프로세스 시작",
       "new_values": {},
-      "session_id": "ai_session_0608_0657"
+      "session_id": "ai_session_0609_1130"
+    },
+    {
+      "timestamp": "2025-06-09T11:30:11.272234",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 67.35653020350335, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 918.55, 'ma50': 917.02, 'current_price': 928.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1130"
+    },
+    {
+      "timestamp": "2025-06-09T11:30:11.279218",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 67.4388426539721, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 5529.75, 'ma50': 5525.12, 'current_price': 5584.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1130"
+    },
+    {
+      "timestamp": "2025-06-09T11:31:11.341615",
+      "file": "main.py",
+      "change_type": "FEATURE_ADD",
+      "description": "고도화된 데이터 수집 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1131"
+    },
+    {
+      "timestamp": "2025-06-09T11:31:11.536276",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 73.00923312579413, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 146310500.0, 'ma50': 145890380.0, 'current_price': 147527000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1131"
+    },
+    {
+      "timestamp": "2025-06-09T11:31:11.543485",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 74.72271182887873, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 3451850.0, 'ma50': 3445420.0, 'current_price': 3490000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1131"
+    },
+    {
+      "timestamp": "2025-06-09T11:31:11.550427",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 62.35350906336942, 'macd_signal': 'HOLD', 'trend': 'NEUTRAL', 'ma20': 3092.5, 'ma50': 3093.9, 'current_price': 3112.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1131"
+    },
+    {
+      "timestamp": "2025-06-09T11:31:11.556995",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 67.35653020350335, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 918.55, 'ma50': 917.02, 'current_price': 928.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1131"
+    },
+    {
+      "timestamp": "2025-06-09T11:31:11.563686",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 65.43493365939014, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 5534.35, 'ma50': 5525.72, 'current_price': 5580.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1131"
+    },
+    {
+      "timestamp": "2025-06-09T11:32:11.609827",
+      "file": "main.py",
+      "change_type": "FEATURE_ADD",
+      "description": "고도화된 데이터 수집 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1132"
+    },
+    {
+      "timestamp": "2025-06-09T11:32:11.804886",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 72.92368831183441, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 146310350.0, 'ma50': 145890320.0, 'current_price': 147524000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1132"
+    },
+    {
+      "timestamp": "2025-06-09T11:32:11.813628",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 74.72271182887873, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 3451850.0, 'ma50': 3445420.0, 'current_price': 3490000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1132"
+    },
+    {
+      "timestamp": "2025-06-09T11:32:11.823275",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 58.75398445013631, 'macd_signal': 'HOLD', 'trend': 'NEUTRAL', 'ma20': 3092.3, 'ma50': 3093.82, 'current_price': 3108.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1132"
+    },
+    {
+      "timestamp": "2025-06-09T11:32:11.830193",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 64.8020413127844, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 918.5, 'ma50': 917.0, 'current_price': 927.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1132"
+    },
+    {
+      "timestamp": "2025-06-09T11:32:11.837901",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 60.491851362814714, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 5533.8, 'ma50': 5525.5, 'current_price': 5569.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1132"
+    },
+    {
+      "timestamp": "2025-06-09T11:33:11.855276",
+      "file": "main.py",
+      "change_type": "FEATURE_ADD",
+      "description": "고도화된 데이터 수집 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1133"
+    },
+    {
+      "timestamp": "2025-06-09T11:33:12.058841",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 72.92368831183441, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 146310350.0, 'ma50': 145890320.0, 'current_price': 147524000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1133"
+    },
+    {
+      "timestamp": "2025-06-09T11:33:12.066200",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 71.75038483775984, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 3451700.0, 'ma50': 3445360.0, 'current_price': 3487000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1133"
+    },
+    {
+      "timestamp": "2025-06-09T11:33:12.073109",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 58.75398445013631, 'macd_signal': 'HOLD', 'trend': 'NEUTRAL', 'ma20': 3092.3, 'ma50': 3093.82, 'current_price': 3108.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1133"
+    },
+    {
+      "timestamp": "2025-06-09T11:33:12.080533",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 64.8020413127844, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 918.5, 'ma50': 917.0, 'current_price': 927.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1133"
+    },
+    {
+      "timestamp": "2025-06-09T11:33:12.087574",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 60.491851362814714, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 5533.8, 'ma50': 5525.5, 'current_price': 5569.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1133"
+    },
+    {
+      "timestamp": "2025-06-09T11:34:12.152722",
+      "file": "main.py",
+      "change_type": "FEATURE_ADD",
+      "description": "고도화된 데이터 수집 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1134"
+    },
+    {
+      "timestamp": "2025-06-09T11:34:12.343971",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 74.11043454298435, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 146312400.0, 'ma50': 145891140.0, 'current_price': 147565000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1134"
+    },
+    {
+      "timestamp": "2025-06-09T11:34:12.351247",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 75.72819415218324, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 3452000.0, 'ma50': 3445480.0, 'current_price': 3493000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1134"
+    },
+    {
+      "timestamp": "2025-06-09T11:34:12.358257",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 59.614334035450035, 'macd_signal': 'HOLD', 'trend': 'NEUTRAL', 'ma20': 3092.35, 'ma50': 3093.84, 'current_price': 3109.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1134"
+    },
+    {
+      "timestamp": "2025-06-09T11:34:12.365271",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 67.35653020350335, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 918.55, 'ma50': 917.02, 'current_price': 928.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1134"
+    },
+    {
+      "timestamp": "2025-06-09T11:34:12.372315",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 60.491851362814714, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 5533.8, 'ma50': 5525.5, 'current_price': 5569.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1134"
+    },
+    {
+      "timestamp": "2025-06-09T11:35:12.437843",
+      "file": "main.py",
+      "change_type": "FEATURE_ADD",
+      "description": "고도화된 데이터 수집 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1135"
+    },
+    {
+      "timestamp": "2025-06-09T11:35:12.642054",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 74.11043454298435, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 146312400.0, 'ma50': 145891140.0, 'current_price': 147565000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1135"
+    },
+    {
+      "timestamp": "2025-06-09T11:35:12.649240",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 73.70494631763563, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 3451800.0, 'ma50': 3445400.0, 'current_price': 3489000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1135"
+    },
+    {
+      "timestamp": "2025-06-09T11:35:12.656215",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 57.105694280067716, 'macd_signal': 'HOLD', 'trend': 'NEUTRAL', 'ma20': 3092.2, 'ma50': 3093.78, 'current_price': 3106.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1135"
+    },
+    {
+      "timestamp": "2025-06-09T11:35:12.663156",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 67.35653020350335, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 918.55, 'ma50': 917.02, 'current_price': 928.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1135"
+    },
+    {
+      "timestamp": "2025-06-09T11:35:12.670150",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 63.54667661555045, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 5534.15, 'ma50': 5525.64, 'current_price': 5576.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1135"
+    },
+    {
+      "timestamp": "2025-06-09T11:36:12.700589",
+      "file": "main.py",
+      "change_type": "FEATURE_ADD",
+      "description": "고도화된 데이터 수집 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1136"
+    },
+    {
+      "timestamp": "2025-06-09T11:36:12.901960",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 76.23570317961814, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 146316600.0, 'ma50': 145892820.0, 'current_price': 147649000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1136"
+    },
+    {
+      "timestamp": "2025-06-09T11:36:12.909770",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 75.72819415218324, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 3452000.0, 'ma50': 3445480.0, 'current_price': 3493000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1136"
+    },
+    {
+      "timestamp": "2025-06-09T11:36:12.916737",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 61.4129036712266, 'macd_signal': 'HOLD', 'trend': 'NEUTRAL', 'ma20': 3092.45, 'ma50': 3093.88, 'current_price': 3111.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1136"
+    },
+    {
+      "timestamp": "2025-06-09T11:36:12.923972",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 67.35653020350335, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 918.55, 'ma50': 917.02, 'current_price': 928.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1136"
+    },
+    {
+      "timestamp": "2025-06-09T11:36:12.930991",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 63.54667661555045, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 5534.15, 'ma50': 5525.64, 'current_price': 5576.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1136"
+    },
+    {
+      "timestamp": "2025-06-09T11:37:12.985623",
+      "file": "main.py",
+      "change_type": "FEATURE_ADD",
+      "description": "고도화된 데이터 수집 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1137"
+    },
+    {
+      "timestamp": "2025-06-09T11:37:13.192508",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 78.02043250961515, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 146326650.0, 'ma50': 145896840.0, 'current_price': 147850000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1137"
+    },
+    {
+      "timestamp": "2025-06-09T11:37:13.199921",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 76.95067191166306, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 3452200.0, 'ma50': 3445560.0, 'current_price': 3497000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1137"
+    },
+    {
+      "timestamp": "2025-06-09T11:37:13.207432",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 64.00731058009902, 'macd_signal': 'HOLD', 'trend': 'NEUTRAL', 'ma20': 3092.65, 'ma50': 3093.96, 'current_price': 3115.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1137"
+    },
+    {
+      "timestamp": "2025-06-09T11:37:13.217354",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 67.35653020350335, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 918.55, 'ma50': 917.02, 'current_price': 928.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1137"
+    },
+    {
+      "timestamp": "2025-06-09T11:37:13.224634",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 68.40638259174489, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 5534.75, 'ma50': 5525.88, 'current_price': 5588.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1137"
+    },
+    {
+      "timestamp": "2025-06-09T11:38:13.245681",
+      "file": "main.py",
+      "change_type": "FEATURE_ADD",
+      "description": "고도화된 데이터 수집 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1138"
+    },
+    {
+      "timestamp": "2025-06-09T11:38:13.471196",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 78.0039954120677, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 146326550.0, 'ma50': 145896800.0, 'current_price': 147848000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1138"
+    },
+    {
+      "timestamp": "2025-06-09T11:38:13.479080",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 76.35522356511746, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 3452100.0, 'ma50': 3445520.0, 'current_price': 3495000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1138"
+    },
+    {
+      "timestamp": "2025-06-09T11:38:13.486988",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 65.52192435617843, 'macd_signal': 'HOLD', 'trend': 'NEUTRAL', 'ma20': 3092.8, 'ma50': 3094.02, 'current_price': 3118.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1138"
+    },
+    {
+      "timestamp": "2025-06-09T11:38:13.494354",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 69.74205918105366, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 918.65, 'ma50': 917.06, 'current_price': 930.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1138"
+    },
+    {
+      "timestamp": "2025-06-09T11:38:13.501776",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 68.63934902389711, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 5534.8, 'ma50': 5525.9, 'current_price': 5589.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1138"
+    },
+    {
+      "timestamp": "2025-06-09T11:39:13.569528",
+      "file": "main.py",
+      "change_type": "FEATURE_ADD",
+      "description": "고도화된 데이터 수집 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1139"
+    },
+    {
+      "timestamp": "2025-06-09T11:39:13.786552",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 77.97929361807047, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 146326400.0, 'ma50': 145896740.0, 'current_price': 147845000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1139"
+    },
+    {
+      "timestamp": "2025-06-09T11:39:13.793714",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 76.04581146641112, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 3452050.0, 'ma50': 3445500.0, 'current_price': 3494000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1139"
+    },
+    {
+      "timestamp": "2025-06-09T11:39:13.800514",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 64.52675436686215, 'macd_signal': 'HOLD', 'trend': 'NEUTRAL', 'ma20': 3092.7, 'ma50': 3093.98, 'current_price': 3116.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1139"
+    },
+    {
+      "timestamp": "2025-06-09T11:39:13.807156",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 69.74205918105366, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 918.65, 'ma50': 917.06, 'current_price': 930.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1139"
+    },
+    {
+      "timestamp": "2025-06-09T11:39:13.813718",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 68.86890488840677, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 5534.85, 'ma50': 5525.92, 'current_price': 5590.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1139"
+    },
+    {
+      "timestamp": "2025-06-09T11:40:13.878592",
+      "file": "main.py",
+      "change_type": "FEATURE_ADD",
+      "description": "고도화된 데이터 수집 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1140"
+    },
+    {
+      "timestamp": "2025-06-09T11:40:14.073395",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 78.0039954120677, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 146326550.0, 'ma50': 145896800.0, 'current_price': 147848000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1140"
+    },
+    {
+      "timestamp": "2025-06-09T11:40:14.081203",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 76.65674434972937, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 3452150.0, 'ma50': 3445540.0, 'current_price': 3496000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1140"
+    },
+    {
+      "timestamp": "2025-06-09T11:40:14.088636",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 64.52675436686215, 'macd_signal': 'HOLD', 'trend': 'NEUTRAL', 'ma20': 3092.7, 'ma50': 3093.98, 'current_price': 3116.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1140"
+    },
+    {
+      "timestamp": "2025-06-09T11:40:14.096219",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 68.59453015239818, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 918.6, 'ma50': 917.04, 'current_price': 929.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1140"
+    },
+    {
+      "timestamp": "2025-06-09T11:40:14.104436",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 68.86890488840677, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 5534.85, 'ma50': 5525.92, 'current_price': 5590.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1140"
+    },
+    {
+      "timestamp": "2025-06-09T11:41:14.158207",
+      "file": "main.py",
+      "change_type": "FEATURE_ADD",
+      "description": "고도화된 데이터 수집 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1141"
+    },
+    {
+      "timestamp": "2025-06-09T11:41:14.358295",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 78.01221703275343, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 146326600.0, 'ma50': 145896820.0, 'current_price': 147849000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1141"
+    },
+    {
+      "timestamp": "2025-06-09T11:41:14.365601",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 76.35522356511746, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 3452100.0, 'ma50': 3445520.0, 'current_price': 3495000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1141"
+    },
+    {
+      "timestamp": "2025-06-09T11:41:14.372617",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 64.00731058009902, 'macd_signal': 'HOLD', 'trend': 'NEUTRAL', 'ma20': 3092.65, 'ma50': 3093.96, 'current_price': 3115.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1141"
+    },
+    {
+      "timestamp": "2025-06-09T11:41:14.380587",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 68.59453015239818, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 918.6, 'ma50': 917.04, 'current_price': 929.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1141"
+    },
+    {
+      "timestamp": "2025-06-09T11:41:14.388390",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 68.63934902389711, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 5534.8, 'ma50': 5525.9, 'current_price': 5589.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1141"
+    },
+    {
+      "timestamp": "2025-06-09T11:42:14.453721",
+      "file": "main.py",
+      "change_type": "FEATURE_ADD",
+      "description": "고도화된 데이터 수집 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1142"
+    },
+    {
+      "timestamp": "2025-06-09T11:42:14.655162",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 78.0940964617877, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 146327100.0, 'ma50': 145897020.0, 'current_price': 147859000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1142"
+    },
+    {
+      "timestamp": "2025-06-09T11:42:14.662797",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 76.65674434972937, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 3452150.0, 'ma50': 3445540.0, 'current_price': 3496000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1142"
+    },
+    {
+      "timestamp": "2025-06-09T11:42:14.670326",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 64.52675436686215, 'macd_signal': 'HOLD', 'trend': 'NEUTRAL', 'ma20': 3092.7, 'ma50': 3093.98, 'current_price': 3116.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1142"
+    },
+    {
+      "timestamp": "2025-06-09T11:42:14.678432",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 68.59453015239818, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 918.6, 'ma50': 917.04, 'current_price': 929.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1142"
+    },
+    {
+      "timestamp": "2025-06-09T11:42:14.685349",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 66.926447568186, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 5534.5, 'ma50': 5525.78, 'current_price': 5583.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1142"
+    },
+    {
+      "timestamp": "2025-06-09T11:43:14.705652",
+      "file": "main.py",
+      "change_type": "FEATURE_ADD",
+      "description": "고도화된 데이터 수집 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1143"
+    },
+    {
+      "timestamp": "2025-06-09T11:43:14.907964",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 79.6266221839307, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 146337200.0, 'ma50': 145901060.0, 'current_price': 148061000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1143"
+    },
+    {
+      "timestamp": "2025-06-09T11:43:14.914073",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 77.51686650857549, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 3452300.0, 'ma50': 3445600.0, 'current_price': 3499000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1143"
+    },
+    {
+      "timestamp": "2025-06-09T11:43:14.919869",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 66.46278086404878, 'macd_signal': 'HOLD', 'trend': 'NEUTRAL', 'ma20': 3092.9, 'ma50': 3094.06, 'current_price': 3120.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1143"
+    },
+    {
+      "timestamp": "2025-06-09T11:43:14.928095",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 69.74205918105366, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 918.65, 'ma50': 917.06, 'current_price': 930.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1143"
+    },
+    {
+      "timestamp": "2025-06-09T11:43:14.936657",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 69.75447795459965, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 5535.05, 'ma50': 5526.0, 'current_price': 5594.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1143"
+    },
+    {
+      "timestamp": "2025-06-09T11:44:15.001759",
+      "file": "main.py",
+      "change_type": "FEATURE_ADD",
+      "description": "고도화된 데이터 수집 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1144"
+    },
+    {
+      "timestamp": "2025-06-09T11:44:15.195308",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 79.6266221839307, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 146337200.0, 'ma50': 145901060.0, 'current_price': 148061000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1144"
+    },
+    {
+      "timestamp": "2025-06-09T11:44:15.203685",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 77.2372895153087, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 3452250.0, 'ma50': 3445580.0, 'current_price': 3498000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1144"
+    },
+    {
+      "timestamp": "2025-06-09T11:44:15.211199",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 65.0314183079187, 'macd_signal': 'HOLD', 'trend': 'NEUTRAL', 'ma20': 3092.75, 'ma50': 3094.0, 'current_price': 3117.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1144"
+    },
+    {
+      "timestamp": "2025-06-09T11:44:15.217797",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 69.74205918105366, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 918.65, 'ma50': 917.06, 'current_price': 930.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1144"
+    },
+    {
+      "timestamp": "2025-06-09T11:44:15.225265",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 69.75447795459965, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 5535.05, 'ma50': 5526.0, 'current_price': 5594.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1144"
+    },
+    {
+      "timestamp": "2025-06-09T11:45:15.289578",
+      "file": "main.py",
+      "change_type": "FEATURE_ADD",
+      "description": "고도화된 데이터 수집 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1145"
+    },
+    {
+      "timestamp": "2025-06-09T11:45:15.485934",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 79.8912666791621, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 146468100.0, 'ma50': 145949000.0, 'current_price': 148099000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1145"
+    },
+    {
+      "timestamp": "2025-06-09T11:45:15.492064",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 77.51686604016459, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 3455500.0, 'ma50': 3446340.0, 'current_price': 3499000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1145"
+    },
+    {
+      "timestamp": "2025-06-09T11:45:15.499618",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 65.55908541634406, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 3094.65, 'ma50': 3094.06, 'current_price': 3118.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1145"
+    },
+    {
+      "timestamp": "2025-06-09T11:45:15.506523",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 69.74205918105366, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 918.65, 'ma50': 917.06, 'current_price': 930.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1145"
+    },
+    {
+      "timestamp": "2025-06-09T11:45:15.513340",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 69.75447795459965, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 5535.05, 'ma50': 5526.0, 'current_price': 5594.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1145"
+    },
+    {
+      "timestamp": "2025-06-09T11:46:15.573139",
+      "file": "main.py",
+      "change_type": "FEATURE_ADD",
+      "description": "고도화된 데이터 수집 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1146"
+    },
+    {
+      "timestamp": "2025-06-09T11:46:15.826800",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 78.98983156252746, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 146466550.0, 'ma50': 145948380.0, 'current_price': 148068000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1146"
+    },
+    {
+      "timestamp": "2025-06-09T11:46:15.837217",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 75.5190806283553, 'macd_signal': 'SELL', 'trend': 'BULLISH', 'ma20': 3455400.0, 'ma50': 3446300.0, 'current_price': 3497000.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1146"
+    },
+    {
+      "timestamp": "2025-06-09T11:46:15.847621",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 65.03141746405547, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 3094.6, 'ma50': 3094.04, 'current_price': 3117.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1146"
+    },
+    {
+      "timestamp": "2025-06-09T11:46:15.858924",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 67.10161957200798, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 919.4, 'ma50': 917.2, 'current_price': 929.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1146"
+    },
+    {
+      "timestamp": "2025-06-09T11:46:15.868571",
+      "file": "core/strategy_engine.py",
+      "change_type": "FEATURE_ADD",
+      "description": "{'rsi': 69.75447795459965, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 5535.05, 'ma50': 5526.0, 'current_price': 5594.0} 신호 생성 프로세스 시작",
+      "new_values": {},
+      "session_id": "ai_session_0609_1146"
     }
   ],
-  "last_updated": "2025-06-08T06:57:48.576877"
+  "last_updated": "2025-06-09T11:46:15.869245"
 }

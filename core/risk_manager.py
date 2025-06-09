@@ -50,6 +50,8 @@ class RiskManager:
         self.data_collector = DataCollector()
         
         # 리스크 한도 설정
+        self.max_trades_per_hour = 5  # 시간당 최대 5회 거래
+        self.last_trade_times = []    # 거래 시간 추적
         self.max_daily_loss = settings_obj.trading.max_daily_loss
         self.max_position_loss = settings_obj.trading.max_position_loss
         self.max_total_exposure = 0.95  # 총 자본의 95%까지만 투자
@@ -131,7 +133,18 @@ class RiskManager:
             concentration_risk = self._check_concentration_risk(signal.ticker, current_positions)
             if concentration_risk:
                 return False, f"농축 위험: {concentration_risk}"
-            
+            # 6.5. 거래 빈도 체크 (15분봉용 추가)
+            current_time = datetime.now()
+            recent_trades = [t for t in self.last_trade_times if current_time - t < timedelta(hours=1)]
+
+            if len(recent_trades) >= 5:  # 시간당 최대 5회
+                return False, f"거래 빈도 초과: {len(recent_trades)}회/시간"
+
+            # 거래 시간 기록 (실제 거래 시에만)
+            if not hasattr(self, 'last_trade_times'):
+                self.last_trade_times = []
+            self.last_trade_times.append(current_time)
+
             # 7. 신호 품질 체크
             if signal.confidence < 0.7:
                 return False, f"신뢰도 부족: {signal.confidence:.2f}"

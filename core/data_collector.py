@@ -51,8 +51,8 @@ class DataCollector:
         
         # 데이터 캐시
         self.data_cache = {}
-        self.cache_duration = 30  # 30초간 캐시 유지
-        
+        self.cache_duration = 300  # 5분간 캐시 유지
+
         # 업비트 객체
         self.upbit_public = None
         self.upbit_private = None
@@ -104,7 +104,7 @@ class DataCollector:
         cache_time = self.data_cache[cache_key]['timestamp']
         return (datetime.now() - cache_time).seconds < self.cache_duration
     
-    def get_ohlcv(self, ticker: str, timeframe: str = "minute1", count: int = 200) -> Optional[pd.DataFrame]:
+    def get_ohlcv(self, ticker: str, timeframe: str = "minute15", count: int = 200) -> Optional[pd.DataFrame]:
         """OHLCV 데이터 조회"""
         try:
             cache_key = self._get_cache_key(ticker, timeframe, count)
