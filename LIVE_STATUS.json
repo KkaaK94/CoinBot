@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "last_updated": "2025-06-09T11:46:15.871307",
+    "last_updated": "2025-06-09T12:47:45.200757",
     "auto_generated": true,
     "version": "1.0.0"
   },
@@ -14,12 +14,12 @@
     "goal": "16만원으로 자동매매 본업 전환"
   },
   "latest_modification": {
-    "timestamp": "2025-06-09T11:46:15.868571",
+    "timestamp": "2025-06-09T12:47:45.198908",
     "file": "core/strategy_engine.py",
     "change_type": "FEATURE_ADD",
-    "description": "{'rsi': 69.75447795459965, 'macd_signal': 'HOLD', 'trend': 'BULLISH', 'ma20': 5535.05, 'ma50': 5526.0, 'current_price': 5594.0} 신호 생성 프로세스 시작",
+    "description": "{'rsi': 56.59340659340659, 'signal': 'HOLD', 'confidence': 0.3, 'current_price': 5555.0, 'symbol': 'KRW-DOT'} 신호 생성 프로세스 시작",
     "new_values": {},
-    "session_id": "ai_session_0609_1146"
+    "session_id": "ai_session_0609_1247"
   },
   "critical_settings": {
     "min_score_threshold": 45,
@@ -35,7 +35,7 @@
     "trading_system": "정상",
     "api_connection": "정상",
     "auto_update_system": "활성화",
-    "last_health_check": "2025-06-09T11:46:15.871850"
+    "last_health_check": "2025-06-09T12:47:45.201125"
   },
   "next_priorities": [
     "1주일 매매 성과 모니터링 및 분석",
