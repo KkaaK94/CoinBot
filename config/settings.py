@@ -64,7 +64,7 @@ class IndicatorConfig:
 class SystemConfig:
     """시스템 설정"""
     # 데이터 수집
-    data_interval: str = "minute1"  # 1분봉
+    data_interval: str = "minute15"  # 1분봉
     lookback_days: int = 30  # 과거 데이터 일수
     
     # 로깅

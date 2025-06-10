@@ -21,9 +21,9 @@
       "mean_reversion_strategy": 0.2,
       "bollinger_bands_strategy": 0.15
     },
-    "min_signal_confidence": 0.4,
+    "min_signal_confidence": 0.65,
     "max_concurrent_strategies": 3,
-    "strategy_cooldown_minutes": 30,
+    "strategy_cooldown_minutes": 180,
     "signal_aggregation_method": "weighted_average"
   },
   "market_conditions": {
@@ -84,7 +84,7 @@
       "rsi_extreme_overbought": 80,
       "rsi_extreme_oversold": 20,
       "rsi_smoothing": 3,
-      "volume_confirmation": false,
+      "volume_confirmation": true,
       "min_volume_ratio": 1.2,
       "divergence_detection": true,
       "divergence_lookback": 10

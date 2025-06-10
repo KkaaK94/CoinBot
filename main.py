@@ -16,6 +16,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+
 # ⚠️ 자동 업데이트 시스템 유지 필수!
 try:
     from utils.auto_updater import log_config_change, log_bug_fix, log_feature_add
@@ -30,7 +31,7 @@ except ImportError:
         def decorator(func): return func
         return decorator
     AUTO_UPDATER_AVAILABLE = False
-    
+
 # 프로젝트 루트 디렉토리를 Python 경로에 추가
 PROJECT_ROOT = Path(__file__).parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -62,6 +63,59 @@ def setup_simple_logger(name="TradingBot", level="INFO", log_file="logs/trading_
     return logger
 
 class TradingBot:
+    def _integrate_analysis_results(self, analysis_results):
+        """분석 결과 통합 (안전 버전)"""
+        try:
+            if not analysis_results:
+                return {"confidence": 0.1, "signal": "HOLD"}
+            
+            integrated = {
+                "signals": [],
+                "avg_confidence": 0.0,
+                "dominant_signal": "HOLD",
+                "analysis_count": 0
+            }
+            
+            total_confidence = 0
+            signal_counts = {"BUY": 0, "SELL": 0, "HOLD": 0}
+            
+            for analysis in analysis_results:
+                # analysis가 문자열인 경우 건너뛰기
+                if isinstance(analysis, str):
+                    print(f"⚠️ 분석 결과가 문자열: {analysis[:50]}...")
+                    continue
+                
+                # analysis가 딕셔너리가 아닌 경우 건너뛰기
+                if not isinstance(analysis, dict):
+                    print(f"⚠️ 분석 결과가 딕셔너리가 아님: {type(analysis)}")
+                    continue
+                
+                # 안전하게 값 추출
+                confidence = analysis.get("confidence", 0.3)
+                signal = analysis.get("signal", "HOLD")
+                
+                integrated["signals"].append({
+                    "confidence": confidence,
+                    "signal": signal
+                })
+                
+                total_confidence += confidence
+                signal_counts[signal] = signal_counts.get(signal, 0) + 1
+                integrated["analysis_count"] += 1
+            
+            if integrated["analysis_count"] > 0:
+                integrated["avg_confidence"] = total_confidence / integrated["analysis_count"]
+                
+                # 가장 많은 신호를 선택
+                dominant_signal = max(signal_counts, key=signal_counts.get)
+                integrated["dominant_signal"] = dominant_signal
+            
+            return integrated
+            
+        except Exception as e:
+            print(f"❌ 분석 결과 통합 실패: {e}")
+            return {"confidence": 0.1, "signal": "HOLD", "error": str(e)}
+
     """통합 트레이딩 봇 클래스 (실제 메서드명 사용)"""
     
     def __init__(self, safe_mode: bool = False):
@@ -248,7 +302,16 @@ class TradingBot:
         except Exception as e:
             print(f"⚠️ 성능 추적기 초기화 실패: {e}")
             self.performance_tracker = None
-    
+    @handle_data_collection_errors(max_retries=3)
+    async def collect_market_data_enhanced(self):
+        """고도화된 데이터 수집 (에러 핸들링 적용)"""
+        try:
+            log_feature_add("main.py", "고도화된 데이터 수집 시작")
+        except:
+            pass
+
+        return await self.data_collector.collect_all_data()
+
     def signal_handler(self, signum, frame):
         """신호 핸들러"""
         signal_names = {
@@ -311,20 +374,26 @@ class TradingBot:
                 self.logger.info(f"트레이딩 루프 #{loop_count} 시작")
                 print(f"📊 루프 #{loop_count} - {datetime.now().strftime('%H:%M:%S')}")
                 
-                # 1. 시장 데이터 수집
+                # 1. 시장 데이터 수집 (고도화된 에러 핸들링 적용)
                 try:
-                    market_data = await self.data_collector.collect_all_data()
-                    
+                    # 고도화된 데이터 수집 사용
+                    market_data = await self.collect_market_data_enhanced()
+
                     if not market_data:
-                        self.logger.warning("시장 데이터를 가져올 수 없습니다")
-                        await asyncio.sleep(60)
-                        continue
-                    
+                       self.logger.warning("시장 데이터를 가져올 수 없습니다")
+                       await asyncio.sleep(60)
+                       continue
+
                     self.logger.info(f"시장 데이터 수집 완료: {len(market_data)}개 코인")
-                    
+               
                 except Exception as e:
-                    self.logger.error(f"시장 데이터 수집 실패: {e}")
+                    # 최종 에러 처리 (auto_recovery 실패 시)
+                    self.logger.error(f"데이터 수집 최종 실패: {e}")
                     print(f"⚠️ 데이터 수집 실패: {e}")
+                    try:
+                        log_bug_fix("main.py", f"데이터 수집 최종 실패 처리: {str(e)}")
+                    except:
+                        pass
                     await asyncio.sleep(60)
                     continue
                 
@@ -553,10 +622,9 @@ class RealDataCollector:
                 try:
                     # 현재가 정보
                     price = pyupbit.get_current_price(ticker)
-                    
-                    # 차트 데이터 (일봉)
-                    df = pyupbit.get_ohlcv(ticker, interval="day", count=200)
-                    
+                    # 차트 데이터 (15분봉)
+                    df = pyupbit.get_ohlcv(ticker, interval="minute15", count=200)
+
                     if price and df is not None and not df.empty:
                         result[ticker] = {
                             "price": price,
@@ -576,118 +644,147 @@ class RealDataCollector:
             return {}
 
 class RealAnalyzer:
-    """실제 작동하는 분석기"""
+    """완전히 안전한 분석기"""
     
     def __init__(self, settings):
         self.settings = settings
-    
+        
     async def analyze(self, symbol, data):
+        """안전한 분석 함수"""
         try:
+            print(f"🔍 {symbol} 분석 시작...")
+            
+            # 데이터 타입 체크
+            if isinstance(data, str):
+                print(f"⚠️ {symbol}: 데이터가 문자열로 전달됨")
+                return self._create_safe_result(symbol, 0)
+            
+            if not isinstance(data, dict):
+                print(f"⚠️ {symbol}: 데이터가 딕셔너리가 아님 ({type(data)})")
+                return self._create_safe_result(symbol, 0)
+            
             if 'ohlcv' not in data:
-                return {"rsi": 50, "macd_signal": "HOLD", "trend": "NEUTRAL"}
+                print(f"⚠️ {symbol}: OHLCV 데이터 없음")
+                return self._create_safe_result(symbol, data.get('price', 0))
             
+            # 실제 분석 수행
             df = data['ohlcv']
-            if df.empty:
-                return {"rsi": 50, "macd_signal": "HOLD", "trend": "NEUTRAL"}
+            current_price = data.get('price', 0)
             
-            # 간단한 기술적 분석
-            import ta
+            if df is None or len(df) < 15:
+                print(f"⚠️ {symbol}: 데이터 부족 ({len(df) if df is not None else 0}개)")
+                return self._create_safe_result(symbol, current_price)
             
             # RSI 계산
-            rsi = ta.momentum.RSIIndicator(df['close']).rsi().iloc[-1]
+            close_prices = df['close']
+            rsi = self._calculate_rsi(close_prices)
             
-            # 이동평균 계산
-            ma20 = df['close'].rolling(20).mean().iloc[-1]
-            ma50 = df['close'].rolling(50).mean().iloc[-1]
-            current_price = df['close'].iloc[-1]
+            # 신호 결정
+            signal = "HOLD"
+            confidence = 0.3
             
-            # 신호 생성
-            if rsi < 30:
+            if rsi <= 30:
                 signal = "BUY"
-            elif rsi > 70:
+                confidence = 0.7
+            elif rsi >= 70:
                 signal = "SELL"
-            else:
-                signal = "HOLD"
+                confidence = 0.7
+            elif rsi <= 35:
+                signal = "BUY"
+                confidence = 0.5
+            elif rsi >= 65:
+                signal = "SELL"
+                confidence = 0.5
             
-            # 추세 판단
-            if current_price > ma20 > ma50:
-                trend = "BULLISH"
-            elif current_price < ma20 < ma50:
-                trend = "BEARISH"
-            else:
-                trend = "NEUTRAL"
-            
-            return {
-                "rsi": rsi,
-                "macd_signal": signal,
-                "trend": trend,
-                "ma20": ma20,
-                "ma50": ma50,
-                "current_price": current_price
+            result = {
+                "rsi": float(rsi),
+                "signal": signal,
+                "confidence": confidence,
+                "current_price": float(current_price),
+                "symbol": symbol
             }
             
+            print(f"✅ {symbol} 분석 완료: RSI={rsi:.1f}, 신호={signal}")
+            return result
+            
         except Exception as e:
-            print(f"  ❌ {symbol} 분석 오류: {e}")
-            return {"rsi": 50, "macd_signal": "HOLD", "trend": "NEUTRAL"}
+            print(f"❌ {symbol} 분석 오류: {e}")
+            return self._create_safe_result(symbol, 0)
+    
+    def _create_safe_result(self, symbol, price):
+        """안전한 기본 결과 생성"""
+        return {
+            "rsi": 50.0,
+            "signal": "HOLD",
+            "confidence": 0.1,
+            "current_price": float(price) if price else 0.0,
+            "symbol": symbol
+        }
+    
+    def _calculate_rsi(self, prices, period=14):
+        """RSI 계산"""
+        try:
+            import pandas as pd
+            import numpy as np
+            
+            if len(prices) < period + 1:
+                return 50.0
+            
+            delta = prices.diff()
+            gain = (delta.where(delta > 0, 0)).rolling(period).mean()
+            loss = (-delta.where(delta < 0, 0)).rolling(period).mean()
+            
+            rs = gain / loss
+            rsi = 100 - (100 / (1 + rs))
+            
+            current_rsi = rsi.iloc[-1]
+            
+            if pd.isna(current_rsi):
+                return 50.0
+            
+            return float(current_rsi)
+            
+        except Exception as e:
+            print(f"❌ RSI 계산 오류: {e}")
+            return 50.0
+
 
 class RealStrategyEngine:
     """실제 작동하는 전략 엔진"""
     
-    def __init__(self, settings=None):
+    def __init__(self, settings):
         self.settings = settings
-        from dataclasses import dataclass
         
-        @dataclass
-        class StrategySignal:
-            symbol: str
-            signal_type: str
-            amount: float
-            price: float
-            confidence: float = 0.5
-            reason: str = ""
-        
-        self.StrategySignal = StrategySignal
-    
     async def generate_signal(self, symbol, analysis):
         try:
+            if not isinstance(analysis, dict):
+                return None
+            
             rsi = analysis.get('rsi', 50)
-            trend = analysis.get('trend', 'NEUTRAL')
+            confidence = analysis.get('confidence', 0.3)
             current_price = analysis.get('current_price', 0)
             
-            # 매수 신호
-            if rsi < 30 and trend != 'BEARISH':
-                return self.StrategySignal(
-                    symbol=symbol,
-                    signal_type="BUY",
-                    amount=10000,  # 1만원
-                    price=current_price,
-                    confidence=0.7,
-                    reason=f"RSI 과매도 ({rsi:.1f})"
-                )
+            signal_type = 'HOLD'
             
-            # 매도 신호
-            elif rsi > 70 and trend != 'BULLISH':
-                return self.StrategySignal(
-                    symbol=symbol,
-                    signal_type="SELL",
-                    amount=10000,
-                    price=current_price,
-                    confidence=0.7,
-                    reason=f"RSI 과매수 ({rsi:.1f})"
-                )
+            if rsi <= 30 and confidence >= 0.3:
+                signal_type = 'BUY'
+                print(f"🟢 {symbol}: 매수 신호 (RSI: {rsi:.1f})")
+            elif rsi >= 70 and confidence >= 0.3:
+                signal_type = 'SELL'
+                print(f"🔴 {symbol}: 매도 신호 (RSI: {rsi:.1f})")
             
-            # 홀드
-            else:
-                return self.StrategySignal(
-                    symbol=symbol,
-                    signal_type="HOLD",
-                    amount=0,
-                    price=current_price,
-                    reason="조건 불충족"
-                )
-                
+            if signal_type != 'HOLD':
+                return type('Signal', (), {
+                    'signal_type': signal_type,
+                    'confidence': confidence,
+                    'entry_price': current_price,
+                    'symbol': symbol
+                })()
+            
+            return None
+            
         except Exception as e:
-            print(f"  ❌ {symbol} 신호 생성 오류: {e}")
+            print(f"❌ {symbol} 신호 생성 실패: {e}")
             return None
 
 class RealRiskManager:

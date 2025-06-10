@@ -1,0 +1,13 @@
+{
+  "primary_timeframe": "minute15",
+  "secondary_timeframes": ["minute5", "minute30"],
+  "rsi_periods": {
+    "minute15": 14,
+    "minute5": 14,
+    "minute30": 14
+  },
+  "ma_periods": {
+    "short": 20,
+    "long": 50
+  }
+}
